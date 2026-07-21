@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>绉掗€侀獞澹?路 宸ヨ祫缁熻</title>
+<title>秒送骑士 · 工资统计</title>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 :root {
@@ -38,7 +38,7 @@ body {
   -webkit-user-select: none;
 }
 
-/* 鈹€鈹€ Header 鈹€鈹€ */
+/* ── Header ── */
 .header {
   position: sticky;
   top: 0;
@@ -86,7 +86,7 @@ body {
   white-space: nowrap;
 }
 
-/* 鈹€鈹€ Summary Card 鈹€鈹€ */
+/* ── Summary Card ── */
 .summary {
   margin: 0 16px;
   background: linear-gradient(135deg, #1e1b1a 0%, #1a1a1e 100%);
@@ -130,7 +130,7 @@ body {
 .summary-item .value.small { font-size: 22px; }
 .summary-item .unit { font-size: 13px; font-weight: 500; color: var(--accent2); margin-left: 2px; }
 
-/* 鈹€鈹€ Quick Add Bar 鈹€鈹€ */
+/* ── Quick Add Bar ── */
 .quick-bar {
   margin: 12px 16px;
   display: flex; gap: 8px;
@@ -162,7 +162,7 @@ body {
 }
 .quick-btn .icon { font-size: 18px; }
 
-/* 鈹€鈹€ Order List 鈹€鈹€ */
+/* ── Order List ── */
 .order-section {
   margin: 0 16px;
   padding-bottom: 100px;
@@ -262,7 +262,7 @@ body {
   font-size: 10px; color: var(--text2);
 }
 
-/* 鈹€鈹€ Empty State 鈹€鈹€ */
+/* ── Empty State ── */
 .empty {
   text-align: center;
   padding: 40px 20px;
@@ -271,7 +271,7 @@ body {
 .empty .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
 .empty p { font-size: 13px; line-height: 1.6; }
 
-/* 鈹€鈹€ Calendar 鈹€鈹€ */
+/* ── Calendar ── */
 .calendar-overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.7);
@@ -498,7 +498,7 @@ body {
   opacity: 0.4; pointer-events: none;
 }
 
-/* 鈹€鈹€ Batch input 鈹€鈹€ */
+/* ── Batch input ── */
 .batch-preview {
   display: flex; flex-wrap: wrap; gap: 6px;
   margin-top: 10px; min-height: 24px;
@@ -511,7 +511,7 @@ body {
   border: 1px solid var(--border);
 }
 
-/* 鈹€鈹€ OCR Modal 鈹€鈹€ */
+/* ── OCR Modal ── */
 .ocr-tabs {
   display: flex; gap: 4px;
   background: var(--surface2);
@@ -695,7 +695,7 @@ body {
   font-size: 13px;
 }
 
-/* 鈹€鈹€ Toast 鈹€鈹€ */
+/* ── Toast ── */
 .toast {
   position: fixed; top: 80px; left: 50%;
   transform: translateX(-50%) translateY(-20px);
@@ -716,7 +716,7 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* 鈹€鈹€ Responsive 鈹€鈹€ */
+/* ── Responsive ── */
 @media (min-width: 500px) {
   body {
     display: flex; justify-content: center;
@@ -741,16 +741,16 @@ body {
   <!-- Header -->
   <div class="header">
     <div class="header-left">
-      <div class="logo">馃浀</div>
+      <div class="logo">🛵</div>
       <div>
-        <h1>绉掗€侀獞澹?/h1>
-        <div class="header-sub">宸ヨ祫缁熻 路 姣忓崟5鍏?+ 瓒?km琛ヨ创楼0.5/km 路 鏃ユ墸淇濋櫓楼3</div>
+        <h1>秒送骑士</h1>
+        <div class="header-sub">工资统计 · 每单5元 + 超3km补贴¥0.5/km · 日扣保险¥3</div>
       </div>
     </div>
     <div class="date-nav">
-      <button onclick="changeDate(-1)" title="鍓嶄竴澶?>鈼€</button>
-      <span class="date-display" id="dateDisplay" onclick="openCalendar()" style="cursor:pointer;">浠婂ぉ</span>
-      <button onclick="changeDate(1)" title="鍚庝竴澶?>鈻?/button>
+      <button onclick="changeDate(-1)" title="前一天">◀</button>
+      <span class="date-display" id="dateDisplay" onclick="openCalendar()" style="cursor:pointer;">今天</span>
+      <button onclick="changeDate(1)" title="后一天">▶</button>
     </div>
   </div>
 
@@ -758,36 +758,36 @@ body {
   <div class="summary">
     <div class="summary-row">
       <div class="summary-item">
-        <div class="label">浠婃棩鍗曢噺</div>
-        <div class="value" id="totalOrders">0<span class="unit">鍗?/span></div>
+        <div class="label">今日单量</div>
+        <div class="value" id="totalOrders">0<span class="unit">单</span></div>
       </div>
       <div class="summary-item">
-        <div class="label">浠婃棩姣涘伐璧?/div>
-        <div class="value" id="totalWage">0<span class="unit">鍏?/span></div>
+        <div class="label">今日毛工资</div>
+        <div class="value" id="totalWage">0<span class="unit">元</span></div>
       </div>
       <div class="summary-item">
-        <div class="label">琛ヨ创鍚堣</div>
-        <div class="value small" id="totalSubsidy">0<span class="unit">鍏?/span></div>
+        <div class="label">补贴合计</div>
+        <div class="value small" id="totalSubsidy">0<span class="unit">元</span></div>
       </div>
     </div>
     <div class="summary-row" style="margin-top:10px;">
       <div class="summary-item" style="background:rgba(224,90,90,0.08);border:1px solid rgba(224,90,90,0.2);">
-        <div class="label">淇濋櫓鎵ｈ垂</div>
-        <div class="value small" id="insuranceFee" style="background:linear-gradient(135deg, #e05a5a, #ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">-0<span class="unit">鍏?/span></div>
+        <div class="label">保险扣费</div>
+        <div class="value small" id="insuranceFee" style="background:linear-gradient(135deg, #e05a5a, #ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">-0<span class="unit">元</span></div>
       </div>
       <div class="summary-item" style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);">
-        <div class="label">浠婃棩鍑€鏀跺叆</div>
-        <div class="value" id="netWage" style="background:linear-gradient(135deg, var(--green), #22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">鍏?/span></div>
+        <div class="label">今日净收入</div>
+        <div class="value" id="netWage" style="background:linear-gradient(135deg, var(--green), #22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">元</span></div>
       </div>
     </div>
     <div class="summary-row" style="margin-top:10px;">
       <div class="summary-item" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);">
-        <div class="label">鏈湀绱鍗曢噺</div>
-        <div class="value" id="monthOrders" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">鍗?/span></div>
+        <div class="label">本月累计单量</div>
+        <div class="value" id="monthOrders" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">单</span></div>
       </div>
       <div class="summary-item" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);">
-        <div class="label">鏈湀绱鍑€鏀跺叆</div>
-        <div class="value" id="monthWage" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">鍏?/span></div>
+        <div class="label">本月累计净收入</div>
+        <div class="value" id="monthWage" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">元</span></div>
       </div>
     </div>
   </div>
@@ -795,69 +795,69 @@ body {
   <!-- Quick Add -->
   <div class="quick-bar">
     <button class="quick-btn primary-btn" onclick="openOcrModal()">
-      <span class="icon">馃摳</span> 鏅鸿兘璇嗗埆
+      <span class="icon">📸</span> 智能识别
     </button>
     <button class="quick-btn" onclick="openAddModal('single')">
-      <span class="icon">鉃?/span> 鎵嬪姩褰曞叆
+      <span class="icon">➕</span> 手动录入
     </button>
     <button class="quick-btn" onclick="openAddModal('batch')">
-      <span class="icon">馃搵</span> 鎵归噺
+      <span class="icon">📋</span> 批量
     </button>
   </div>
 
   <!-- Order List -->
   <div class="order-section">
     <div class="section-header">
-      <h3>馃摝 璁㈠崟鏄庣粏 <span class="count-badge" id="orderCount">0</span></h3>
+      <h3>📦 订单明细 <span class="count-badge" id="orderCount">0</span></h3>
       <div style="display:flex;gap:6px;">
-        <button class="clear-btn" onclick="moveOrders()" id="moveBtn" style="display:none;color:var(--accent2);">绉昏嚦...</button>
-        <button class="clear-btn" onclick="clearToday()" id="clearBtn" style="display:none">娓呯┖浠婃棩</button>
+        <button class="clear-btn" onclick="moveOrders()" id="moveBtn" style="display:none;color:var(--accent2);">移至...</button>
+        <button class="clear-btn" onclick="clearToday()" id="clearBtn" style="display:none">清空今日</button>
       </div>
     </div>
     <div class="order-list" id="orderList">
       <div class="empty">
-        <div class="icon">馃摥</div>
-        <p>浠婂ぉ杩樻病鏈夊綍鍏ヨ鍗?br>鐐瑰嚮涓婃柟鎸夐挳寮€濮嬭褰?/p>
+        <div class="icon">📭</div>
+        <p>今天还没有录入订单<br>点击上方按钮开始记录</p>
       </div>
     </div>
 
-    <!-- 鏁版嵁绠＄悊涓庡浠?-->
+    <!-- 数据管理与备份 -->
     <div style="margin-top:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:12px;color:var(--text2);font-weight:600;">馃捑 鏁版嵁绠＄悊</span>
-        <span style="font-size:11px;" id="storageStatus">鉄?鍚屾涓?..</span>
+        <span style="font-size:12px;color:var(--text2);font-weight:600;">💾 数据管理</span>
+        <span style="font-size:11px;" id="storageStatus">⟳ 同步中...</span>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button onclick="forceSync()" style="flex:1;padding:10px;border:1px solid #4fc3f7;border-radius:8px;background:rgba(79,195,247,0.1);color:#4fc3f7;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">鈽侊笍 鍚屾鍒颁簯绔?/button>
-        <button onclick="copyData()" style="flex:1;padding:10px;border:1px solid var(--accent);border-radius:8px;background:rgba(255,107,53,0.1);color:var(--accent);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">馃搵 澶嶅埗鏁版嵁</button>
+        <button onclick="forceSync()" style="flex:1;padding:10px;border:1px solid #4fc3f7;border-radius:8px;background:rgba(79,195,247,0.1);color:#4fc3f7;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">☁️ 同步到云端</button>
+        <button onclick="copyData()" style="flex:1;padding:10px;border:1px solid var(--accent);border-radius:8px;background:rgba(255,107,53,0.1);color:var(--accent);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">📋 复制数据</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button onclick="pasteData()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">馃搶 绮樿创鏁版嵁</button>
-        <button onclick="pullAndMerge()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">馃斀 浠庝簯绔仮澶?/button>
+        <button onclick="pasteData()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">📌 粘贴数据</button>
+        <button onclick="pullAndMerge()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">🔽 从云端恢复</button>
       </div>
       <div style="display:flex;gap:8px;">
-        <button onclick="exportData()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">馃摛 瀵煎嚭鏂囦欢</button>
-        <button onclick="document.getElementById('importFileInput').click()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">馃摜 瀵煎叆鏂囦欢</button>
+        <button onclick="exportData()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📤 导出文件</button>
+        <button onclick="document.getElementById('importFileInput').click()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📥 导入文件</button>
       </div>
       <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(this)">
-      <button onclick="toggleCloudSettings()" style="width:100%;margin-top:6px;padding:6px;border:1px dashed #555;border-radius:6px;background:transparent;color:#666;font-size:10px;cursor:pointer;font-family:inherit;">鈿欙笍 浜戠璁剧疆锛堥娆′娇鐢ㄩ渶閰嶇疆锛?/button>
+      <button onclick="toggleCloudSettings()" style="width:100%;margin-top:6px;padding:6px;border:1px dashed #555;border-radius:6px;background:transparent;color:#666;font-size:10px;cursor:pointer;font-family:inherit;">⚙️ 云端设置（首次使用需配置）</button>
       <div id="cloudSettingsPanel" style="display:none;margin-top:8px;padding:10px;background:var(--surface2);border-radius:6px;font-size:11px;">
         <div style="margin-bottom:8px;">
           <label style="display:block;margin-bottom:4px;color:var(--text2);">JSONBin API Key</label>
-          <input type="text" id="apiKeyInput" placeholder="绮樿创浣犵殑 API Key" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
+          <input type="text" id="apiKeyInput" placeholder="粘贴你的 API Key" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
         </div>
         <div style="margin-bottom:8px;">
-          <label style="display:block;margin-bottom:4px;color:var(--text2);">Bin ID锛堢暀绌鸿嚜鍔ㄥ垱寤猴級</label>
-          <input type="text" id="binIdInput" placeholder="棣栨鐣欑┖锛屾崲璁惧鏃跺～鍏? style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
+          <label style="display:block;margin-bottom:4px;color:var(--text2);">Bin ID（留空自动创建）</label>
+          <input type="text" id="binIdInput" placeholder="首次留空，换设备时填入" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
         </div>
-        <button onclick="saveCloudConfig()" style="width:100%;padding:8px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">馃捑 淇濆瓨骞惰繛鎺?/button>
+        <button onclick="saveCloudConfig()" style="width:100%;padding:8px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">💾 保存并连接</button>
         <div id="shareLinkPanel" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none;">
-          <label style="display:block;margin-bottom:4px;color:var(--text2);">馃敆 鍒嗕韩閾炬帴锛堝惈瀵嗛挜锛?/label>
+          <label style="display:block;margin-bottom:4px;color:var(--text2);">🔗 分享链接（含密钥）</label>
           <input type="text" id="shareLinkInput" readonly style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;" onclick="this.select()">
-          <button onclick="copyShareLink()" style="width:100%;margin-top:6px;padding:6px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">馃搵 澶嶅埗閾炬帴</button>
+          <button onclick="copyShareLink()" style="width:100%;margin-top:6px;padding:6px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📋 复制链接</button>
         </div>
         <div style="margin-top:6px;color:#555;line-height:1.5;">
-          娉ㄥ唽鍦板潃锛歫sonbin.io<br>API Keys 椤甸潰鑾峰彇瀵嗛挜
+          注册地址：jsonbin.io<br>API Keys 页面获取密钥
         </div>
       </div>
       <div style="margin-top:8px;font-size:10px;color:#555;text-align:center;" id="dataStats"></div>
@@ -869,25 +869,25 @@ body {
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h3 id="modalTitle">娣诲姞璁㈠崟</h3>
+    <h3 id="modalTitle">添加订单</h3>
     <div id="singleInput">
       <div class="input-group">
-        <label>閰嶉€佽窛绂伙紙鍏噷锛?/label>
-        <input type="number" id="distanceInput" placeholder="渚嬪锛?.5" step="0.1" min="0" inputmode="decimal">
+        <label>配送距离（公里）</label>
+        <input type="number" id="distanceInput" placeholder="例如：3.5" step="0.1" min="0" inputmode="decimal">
         <div class="input-hint" id="pricePreview"></div>
       </div>
     </div>
     <div id="batchInput" style="display:none">
       <div class="input-group">
-        <label>鎵归噺杈撳叆璺濈锛堢敤绌烘牸銆侀€楀彿鎴栨崲琛屽垎闅旓級</label>
-        <input type="text" id="batchInputField" placeholder="渚嬪锛?.5 2.0 5.2 1.8">
+        <label>批量输入距离（用空格、逗号或换行分隔）</label>
+        <input type="text" id="batchInputField" placeholder="例如：3.5 2.0 5.2 1.8">
         <div class="input-hint" id="batchPreviewHint"></div>
       </div>
       <div class="batch-preview" id="batchPreview"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">鍙栨秷</button>
-      <button class="btn-primary" id="confirmBtn" onclick="confirmAdd()">纭娣诲姞</button>
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-primary" id="confirmBtn" onclick="confirmAdd()">确认添加</button>
     </div>
   </div>
 </div>
@@ -896,70 +896,70 @@ body {
 <div class="modal-overlay" id="ocrModalOverlay">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h3>馃摳 鏅鸿兘璇嗗埆璺濈</h3>
+    <h3>📸 智能识别距离</h3>
 
     <!-- Tabs -->
     <div class="ocr-tabs">
-      <button class="ocr-tab active" data-tab="photo" onclick="switchOcrTab('photo')">馃摲 鎷嶇収</button>
-      <button class="ocr-tab" data-tab="gallery" onclick="switchOcrTab('gallery')">馃柤锔?鐩稿唽</button>
-      <button class="ocr-tab" data-tab="video" onclick="switchOcrTab('video')">馃幀 褰曞睆</button>
+      <button class="ocr-tab active" data-tab="photo" onclick="switchOcrTab('photo')">📷 拍照</button>
+      <button class="ocr-tab" data-tab="gallery" onclick="switchOcrTab('gallery')">🖼️ 相册</button>
+      <button class="ocr-tab" data-tab="video" onclick="switchOcrTab('video')">🎬 录屏</button>
     </div>
 
-    <!-- Tab: 鎷嶇収 -->
+    <!-- Tab: 拍照 -->
     <div class="ocr-tab-content active" id="tab-photo">
       <div class="ocr-upload-area" onclick="triggerCamera()">
-        <div class="icon">馃摲</div>
-        <p>鐐瑰嚮鎷嶇収</p>
-        <div class="sub">鐩存帴鎷嶆憚浜笢绉掗€丄PP璁㈠崟椤甸潰</div>
+        <div class="icon">📷</div>
+        <p>点击拍照</p>
+        <div class="sub">直接拍摄京东秒送APP订单页面</div>
       </div>
     </div>
 
-    <!-- Tab: 鐩稿唽 -->
+    <!-- Tab: 相册 -->
     <div class="ocr-tab-content" id="tab-gallery">
       <div class="ocr-upload-area" onclick="document.getElementById('ocrFileInput').click()">
-        <div class="icon">馃柤锔?/div>
-        <p>鐐瑰嚮閫夋嫨鎴浘锛堝彲澶氶€夛級</p>
-        <div class="sub">浠庣浉鍐岄€夋嫨浜笢绉掗€丄PP璁㈠崟鎴浘锛屾敮鎸佷竴娆￠€夊寮?/div>
+        <div class="icon">🖼️</div>
+        <p>点击选择截图（可多选）</p>
+        <div class="sub">从相册选择京东秒送APP订单截图，支持一次选多张</div>
       </div>
     </div>
 
-    <!-- Tab: 褰曞睆 -->
+    <!-- Tab: 录屏 -->
     <div class="ocr-tab-content" id="tab-video">
       <div class="ocr-upload-area" id="videoUploadArea" onclick="document.getElementById('ocrVideoInput').click()">
-        <div class="icon">馃幀</div>
-        <p>鐐瑰嚮閫夋嫨褰曞睆瑙嗛</p>
-        <div class="sub">褰曚笅浜笢绉掗€丄PP璁㈠崟鍒楄〃椤甸潰锛岃嚜鍔ㄩ€愬抚璇嗗埆</div>
+        <div class="icon">🎬</div>
+        <p>点击选择录屏视频</p>
+        <div class="sub">录下京东秒送APP订单列表页面，自动逐帧识别</div>
       </div>
       <video id="ocrVideoPreview" class="ocr-video-preview" controls muted playsinline></video>
-      <button class="ocr-start-btn" id="videoStartBtn" onclick="startVideoOCR()">锟?寮€濮嬭瘑鍒?/button>
+      <button class="ocr-start-btn" id="videoStartBtn" onclick="startVideoOCR()">� 开始识别</button>
     </div>
 
     <input type="file" id="ocrFileInput" accept="image/*" multiple style="display:none" onchange="handleOcrFile(this)">
     <input type="file" id="ocrVideoInput" accept="video/*" style="display:none" onchange="handleOcrVideo(this)">
 
-    <!-- 鍥剧墖棰勮 -->
-    <img id="ocrPreviewImg" class="ocr-preview-img" alt="棰勮">
+    <!-- 图片预览 -->
+    <img id="ocrPreviewImg" class="ocr-preview-img" alt="预览">
 
-    <!-- 璇嗗埆杩涘害 -->
+    <!-- 识别进度 -->
     <div class="ocr-progress" id="ocrProgress">
       <div class="spinner"></div>
-      <div class="status" id="ocrStatus">姝ｅ湪璇嗗埆...</div>
+      <div class="status" id="ocrStatus">正在识别...</div>
       <div class="percent" id="ocrPercent"></div>
     </div>
 
-    <!-- 璇嗗埆缁撴灉 -->
+    <!-- 识别结果 -->
     <div class="ocr-results" id="ocrResults">
-      <h4>馃攳 璇嗗埆鍒颁互涓嬭窛绂伙紙鍙慨鏀癸級锛?/h4>
+      <h4>🔍 识别到以下距离（可修改）：</h4>
       <div id="ocrResultList"></div>
     </div>
     <div class="ocr-no-result" id="ocrNoResult" style="display:none">
-      <p>馃様 鏈兘璇嗗埆鍒拌窛绂绘暟鎹?/p>
-      <p style="font-size:11px;color:#555;margin-top:4px;">璇风‘淇濇埅鍥惧寘鍚窛绂绘暟瀛楋紙濡?3.5km銆?.2鍏噷锛?/p>
+      <p>😔 未能识别到距离数据</p>
+      <p style="font-size:11px;color:#555;margin-top:4px;">请确保截图包含距离数字（如 3.5km、5.2公里）</p>
     </div>
 
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeOcrModal()">鍙栨秷</button>
-      <button class="btn-primary" id="ocrConfirmBtn" onclick="confirmOcrAdd()" disabled>纭娣诲姞</button>
+      <button class="btn-cancel" onclick="closeOcrModal()">取消</button>
+      <button class="btn-primary" id="ocrConfirmBtn" onclick="confirmOcrAdd()" disabled>确认添加</button>
     </div>
   </div>
 </div>
@@ -972,24 +972,24 @@ body {
   <div class="calendar-popup">
     <div class="calendar-popup-inner">
       <div class="calendar-header">
-        <button onclick="changeCalendarMonth(-1)">鈼€</button>
+        <button onclick="changeCalendarMonth(-1)">◀</button>
         <span class="calendar-month" id="calendarMonth"></span>
-        <button onclick="changeCalendarMonth(1)">鈻?/button>
+        <button onclick="changeCalendarMonth(1)">▶</button>
       </div>
       <div class="calendar-weekdays">
-        <span>鏃?/span><span>涓€</span><span>浜?/span><span>涓?/span><span>鍥?/span><span>浜?/span><span>鍏?/span>
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
       </div>
       <div class="calendar-grid" id="calendarGrid"></div>
     </div>
     <div class="calendar-footer">
       <span class="calendar-summary" id="calendarSummary"></span>
-      <button class="calendar-close" onclick="closeCalendar()">鍏抽棴</button>
+      <button class="calendar-close" onclick="closeCalendar()">关闭</button>
     </div>
   </div>
 </div>
 
 <script>
-// 鈹€鈹€ 鏁版嵁绠＄悊 鈹€鈹€
+// ── 数据管理 ──
 const STORAGE_KEY = 'rider_salary_data';
 const JB_API_KEY_STORE = '_jb_api_key';
 const JB_BIN_ID_STORE = '_jb_bin_id';
@@ -1032,29 +1032,30 @@ function toggleCloudSettings() {
 async function saveCloudConfig() {
   const apiKey = document.getElementById('apiKeyInput').value.trim();
   const binId = document.getElementById('binIdInput').value.trim();
-  if (!apiKey) { showToast('璇峰～鍏?API Key'); return; }
+  if (!apiKey) { showToast('请填入 API Key'); return; }
   setApiKey(apiKey);
   if (binId) setBinId(binId);
 
   setCloudStatus('syncing');
-  document.getElementById('dataStats').textContent = '姝ｅ湪杩炴帴...';
+  document.getElementById('dataStats').textContent = '正在连接...';
 
-  // 濡傛灉娌℃湁 bin ID锛屽垱寤轰竴涓?  if (!getBinId()) {
+  // 如果没有 bin ID，创建一个
+  if (!getBinId()) {
     const newId = await createBin();
     if (!newId) {
-      showToast('API Key 鏃犳晥鎴栫綉缁滈敊璇?);
+      showToast('API Key 无效或网络错误');
       setCloudStatus('error');
       return;
     }
     setBinId(newId);
   }
 
-  // 绔嬪嵆鍚屾鏈湴鏁版嵁
+  // 立即同步本地数据
   _syncing = false;
   const data = loadData();
   const ok = await pushToCloud(data);
   if (ok) {
-    showToast('浜戠閰嶇疆鎴愬姛锛屽凡鍚屾 鉁?);
+    showToast('云端配置成功，已同步 ✓');
     document.getElementById('dataStats').textContent = 'Bin ID: ' + getBinId();
     showShareLink();
   }
@@ -1075,11 +1076,11 @@ async function copyShareLink() {
   const input = document.getElementById('shareLinkInput');
   try {
     await navigator.clipboard.writeText(input.value);
-    showToast('閾炬帴宸插鍒跺埌鍓创鏉?鉁?);
+    showToast('链接已复制到剪贴板 ✓');
   } catch (e) {
     input.select();
     document.execCommand('copy');
-    showToast('閾炬帴宸插鍒?鉁?);
+    showToast('链接已复制 ✓');
   }
 }
 
@@ -1087,8 +1088,9 @@ const BASE_FEE = 5;
 const FREE_KM = 3;
 const SUBSIDY_RATE = 0.5;
 const INSURANCE_FEE = 3;
-const BASE_GUARANTEE = 120; // 姣忔棩淇濆簳姣涘伐璧?
-// 璁＄畻淇濆簳鍚庢瘺宸ヨ祫锛堟湁璁㈠崟鏃讹紝姣涘伐璧勪笉瓒?20鎸?20绠楋級
+const BASE_GUARANTEE = 120; // 每日保底毛工资
+
+// 计算保底后毛工资（有订单时，毛工资不足120按120算）
 function applyGuarantee(gross, hasOrders) {
   if (!hasOrders) return 0;
   return Math.max(gross, BASE_GUARANTEE);
@@ -1111,11 +1113,11 @@ function loadData() {
 
 function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  // 鑷姩鍚屾鍒颁簯绔紙闃叉姈3绉掞級
+  // 自动同步到云端（防抖3秒）
   scheduleCloudSync(data);
 }
 
-// 鈹€鈹€ 浜戠鍚屾锛堢畝鍖栫増锛氬崟浠擄紝鑷姩缁湡锛夆攢鈹€
+// ── 云端同步（简化版：单仓，自动续期）──
 let _syncTimer = null;
 
 function scheduleCloudSync(data) {
@@ -1127,15 +1129,16 @@ function setCloudStatus(state) {
   const el = document.getElementById('storageStatus');
   if (!el) return;
   const map = {
-    syncing: '<span style="color:#fbbf24;">鉄?鍚屾涓?..</span>',
-    synced: '<span style="color:#4fc3f7;">鈽侊笍 浜戠宸插悓姝?/span>',
-    error: '<span style="color:#e05a5a;">鈿?鍚屾澶辫触</span>',
-    local: '<span style="color:var(--green);">鈼?鏈湴宸插瓨鍌?/span>'
+    syncing: '<span style="color:#fbbf24;">⟳ 同步中...</span>',
+    synced: '<span style="color:#4fc3f7;">☁️ 云端已同步</span>',
+    error: '<span style="color:#e05a5a;">⚠ 同步失败</span>',
+    local: '<span style="color:var(--green);">● 本地已存储</span>'
   };
   el.innerHTML = map[state] || map.local;
 }
 
-// 绮剧畝鏁版嵁锛氫簯绔彧瀛?distance + time锛屽噺灏戜綋绉?function compactData(data) {
+// 精简数据：云端只存 distance + time，减少体积
+function compactData(data) {
   const compact = {};
   for (const [date, orders] of Object.entries(data)) {
     compact[date] = orders.map(o => ({ d: o.distance, t: o.time || '' }));
@@ -1143,7 +1146,7 @@ function setCloudStatus(state) {
   return compact;
 }
 
-// 杩樺師鏁版嵁锛氫粠绮剧畝鏍煎紡閲嶅缓瀹屾暣璁㈠崟
+// 还原数据：从精简格式重建完整订单
 function expandData(compact) {
   const expanded = {};
   for (const [date, orders] of Object.entries(compact)) {
@@ -1163,7 +1166,7 @@ function expandData(compact) {
   return expanded;
 }
 
-// 鍒涘缓鏂扮殑 JSONBin bin
+// 创建新的 JSONBin bin
 async function createBin() {
   try {
     const resp = await fetch(JB_BASE, {
@@ -1184,7 +1187,7 @@ async function createBin() {
   }
 }
 
-// 鎺ㄩ€佹暟鎹埌浜戠
+// 推送数据到云端
 async function pushToCloud(data) {
   if (_syncing) return false;
   _syncing = true;
@@ -1194,7 +1197,7 @@ async function pushToCloud(data) {
   const binId = getBinId();
   if (!apiKey || !binId) {
     setCloudStatus('error');
-    document.getElementById('dataStats').textContent = '璇峰厛閰嶇疆浜戠锛堢偣鍑烩殭锔忥級';
+    document.getElementById('dataStats').textContent = '请先配置云端（点击⚙️）';
     _syncing = false;
     return false;
   }
@@ -1221,19 +1224,20 @@ async function pushToCloud(data) {
       let detail = '';
       try { detail = await resp.text(); } catch (ex) {}
       setCloudStatus('error');
-      document.getElementById('dataStats').textContent = '鍚屾澶辫触: HTTP ' + resp.status + ' ' + detail.substring(0, 60);
+      document.getElementById('dataStats').textContent = '同步失败: HTTP ' + resp.status + ' ' + detail.substring(0, 60);
       _syncing = false;
       return false;
     }
   } catch (e) {
     setCloudStatus('error');
-    document.getElementById('dataStats').textContent = '鍚屾澶辫触: ' + (e.message || String(e)).substring(0, 60);
+    document.getElementById('dataStats').textContent = '同步失败: ' + (e.message || String(e)).substring(0, 60);
     _syncing = false;
     return false;
   }
 }
 
-// 浠庝簯绔媺鍙栨暟鎹?async function pullFromCloud() {
+// 从云端拉取数据
+async function pullFromCloud() {
   try {
     const apiKey = getApiKey();
     const binId = getBinId();
@@ -1258,13 +1262,15 @@ async function pushToCloud(data) {
   }
 }
 
-// 鍒濆鍖栦簯绔悓姝?async function initCloudSync() {
+// 初始化云端同步
+async function initCloudSync() {
   const apiKey = getApiKey();
   const binId = getBinId();
 
-  // 鏈厤缃?API Key锛屽彧鏄剧ず鏈湴鐘舵€?  if (!apiKey || !binId) {
+  // 未配置 API Key，只显示本地状态
+  if (!apiKey || !binId) {
     setCloudStatus('local');
-    document.getElementById('dataStats').textContent = '鐐瑰嚮鈿欙笍閰嶇疆浜戠鍚屾';
+    document.getElementById('dataStats').textContent = '点击⚙️配置云端同步';
     return;
   }
 
@@ -1312,36 +1318,37 @@ function saveDataSilent(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-// 鎵嬪姩寮哄埗鍚屾
+// 手动强制同步
 async function forceSync() {
   setCloudStatus('syncing');
-  _syncing = false; // 閲嶇疆閿?  const data = loadData();
+  _syncing = false; // 重置锁
+  const data = loadData();
   const ok = await pushToCloud(data);
   if (ok) {
-    showToast(data && Object.keys(data).length > 0 ? '宸插悓姝ュ埌浜戠 鉁? : '浜戠宸叉竻绌?鉁?);
+    showToast(data && Object.keys(data).length > 0 ? '已同步到云端 ✓' : '云端已清空 ✓');
   } else {
     const errEl = document.getElementById('dataStats');
-    showToast('鍚屾澶辫触: ' + (errEl ? errEl.textContent.replace('鍚屾澶辫触: ', '') : '鏈煡閿欒'));
+    showToast('同步失败: ' + (errEl ? errEl.textContent.replace('同步失败: ', '') : '未知错误'));
   }
 }
 
-// 浠庝簯绔媺鍙栧苟鍚堝苟
+// 从云端拉取并合并
 async function pullAndMerge() {
   const apiKey = getApiKey();
   const binId = getBinId();
   if (!apiKey || !binId) {
-    showToast('璇峰厛鐐瑰嚮鈿欙笍閰嶇疆浜戠');
+    showToast('请先点击⚙️配置云端');
     return;
   }
   setCloudStatus('syncing');
   const cloudData = await pullFromCloud();
   if (cloudData === null) {
-    showToast('浜戠杩炴帴澶辫触锛岃妫€鏌ョ綉缁滄垨 API Key');
+    showToast('云端连接失败，请检查网络或 API Key');
     setCloudStatus('error');
     return;
   }
   if (Object.keys(cloudData).length === 0) {
-    showToast('浜戠鏆傛棤鏁版嵁');
+    showToast('云端暂无数据');
     setCloudStatus('synced');
     return;
   }
@@ -1361,7 +1368,7 @@ async function pullAndMerge() {
   await pushToCloud(merged);
   renderAll();
   setCloudStatus('synced');
-  showToast(`浠庝簯绔仮澶?${Object.keys(cloudData).length} 澶╂暟鎹?鉁揱);
+  showToast(`从云端恢复 ${Object.keys(cloudData).length} 天数据 ✓`);
 }
 
 function getDayOrders(date) {
@@ -1378,21 +1385,22 @@ function saveDayOrders(date, orders) {
 function calcOrder(distance) {
   const d = parseFloat(distance) || 0;
   const base = BASE_FEE;
-  // 鎸夋暣鍏噷闃舵璁′环锛?.0-3.9鈫?.5, 4.0-4.9鈫?.0, 5.0-5.9鈫?.5...
-  // 琛ヨ创 = max(0, floor(璺濈) - 2) 脳 0.5
+  // 按整公里阶梯计价：3.0-3.9→5.5, 4.0-4.9→6.0, 5.0-5.9→6.5...
+  // 补贴 = max(0, floor(距离) - 2) × 0.5
   const subsidy = d >= 3 ? Math.max(0, Math.floor(d) - 2) * SUBSIDY_RATE : 0;
   const total = base + subsidy;
   return { distance: d, base, subsidy, total };
 }
 
-// 鈹€鈹€ UI 娓叉煋 鈹€鈹€
+// ── UI 渲染 ──
 function renderAll() {
   try {
     renderDateDisplay();
     renderSummary();
     renderOrderList();
     updateDataStats();
-    // 妫€娴嬫槸鍚︿负鏂伴摼鎺ワ紙鏃犲巻鍙叉暟鎹級锛屾彁绀鸿縼绉?    checkDataMigration();
+    // 检测是否为新链接（无历史数据），提示迁移
+    checkDataMigration();
   } catch (e) {
     console.error('renderAll error:', e);
     try { renderOrderList(); } catch (e2) { console.error('renderOrderList fallback error:', e2); }
@@ -1407,7 +1415,7 @@ function checkDataMigration() {
     localStorage.setItem('_migration_hint_shown', '1');
     const statsEl = document.getElementById('dataStats');
     if (statsEl) {
-      statsEl.innerHTML = '馃挕 棣栨浣跨敤锛熺偣銆岎煍?浠庝簯绔仮澶嶃€嶆媺鍙栧凡澶囦唤鐨勬暟鎹?;
+      statsEl.innerHTML = '💡 首次使用？点「🔽 从云端恢复」拉取已备份的数据';
       statsEl.style.color = '#4fc3f7';
       statsEl.style.fontSize = '11px';
       statsEl.style.fontWeight = '600';
@@ -1419,10 +1427,10 @@ function renderDateDisplay() {
   const el = document.getElementById('dateDisplay');
   const today = getToday();
   if (currentDate === today) {
-    el.textContent = '浠婂ぉ';
+    el.textContent = '今天';
   } else {
     const d = new Date(currentDate);
-    el.textContent = `${d.getMonth()+1}鏈?{d.getDate()}鏃;
+    el.textContent = `${d.getMonth()+1}月${d.getDate()}日`;
   }
 }
 
@@ -1436,16 +1444,16 @@ function renderSummary() {
   const netWage = totalWage - insurance;
   const isGuaranteed = count > 0 && rawGross < BASE_GUARANTEE;
 
-  document.getElementById('totalOrders').innerHTML = `${count}<span class="unit">鍗?/span>`;
-  document.getElementById('totalWage').innerHTML = `${totalWage.toFixed(1)}<span class="unit">鍏?/span>${isGuaranteed ? '<span style="font-size:10px;color:#fbbf24;margin-left:4px;">淇濆簳</span>' : ''}`;
-  document.getElementById('totalSubsidy').innerHTML = `${totalSubsidy.toFixed(1)}<span class="unit">鍏?/span>`;
-  document.getElementById('insuranceFee').innerHTML = `-${insurance}<span class="unit">鍏?/span>`;
-  document.getElementById('netWage').innerHTML = `${netWage.toFixed(1)}<span class="unit">鍏?/span>`;
+  document.getElementById('totalOrders').innerHTML = `${count}<span class="unit">单</span>`;
+  document.getElementById('totalWage').innerHTML = `${totalWage.toFixed(1)}<span class="unit">元</span>${isGuaranteed ? '<span style="font-size:10px;color:#fbbf24;margin-left:4px;">保底</span>' : ''}`;
+  document.getElementById('totalSubsidy').innerHTML = `${totalSubsidy.toFixed(1)}<span class="unit">元</span>`;
+  document.getElementById('insuranceFee').innerHTML = `-${insurance}<span class="unit">元</span>`;
+  document.getElementById('netWage').innerHTML = `${netWage.toFixed(1)}<span class="unit">元</span>`;
   document.getElementById('orderCount').textContent = count;
   document.getElementById('clearBtn').style.display = count > 0 ? 'inline-block' : 'none';
   document.getElementById('moveBtn').style.display = count > 0 ? 'inline-block' : 'none';
 
-  // 鏈湀缁熻
+  // 本月统计
   const monthPrefix = currentDate.substring(0, 7);
   const allData = loadData();
   let monthOrders = 0;
@@ -1460,8 +1468,8 @@ function renderSummary() {
     }
   }
   const monthNet = monthGross - monthInsuranceDays * INSURANCE_FEE;
-  document.getElementById('monthOrders').innerHTML = `${monthOrders}<span class="unit">鍗?/span>`;
-  document.getElementById('monthWage').innerHTML = `${monthNet.toFixed(1)}<span class="unit">鍏?/span>`;
+  document.getElementById('monthOrders').innerHTML = `${monthOrders}<span class="unit">单</span>`;
+  document.getElementById('monthWage').innerHTML = `${monthNet.toFixed(1)}<span class="unit">元</span>`;
 }
 
 function renderOrderList() {
@@ -1471,8 +1479,8 @@ function renderOrderList() {
   if (orders.length === 0) {
     container.innerHTML = `
       <div class="empty">
-        <div class="icon">馃摥</div>
-        <p>浠婂ぉ杩樻病鏈夊綍鍏ヨ鍗?br>鐐瑰嚮涓婃柟鎸夐挳寮€濮嬭褰?/p>
+        <div class="icon">📭</div>
+        <p>今天还没有录入订单<br>点击上方按钮开始记录</p>
       </div>`;
     return;
   }
@@ -1490,17 +1498,17 @@ function renderOrderList() {
     const total = o.total || (base + subsidy);
     return `
     <div class="order-swipe-wrap" data-id="${o.id}">
-      <div class="order-swipe-bg">鍒犻櫎</div>
+      <div class="order-swipe-bg">删除</div>
       <div class="order-card" id="order-${o.id}">
         <div class="order-num">${i + 1}</div>
         <div class="order-info">
-          <div class="distance">${dist} 鍏噷</div>
+          <div class="distance">${dist} 公里</div>
           <div class="detail">
-            鍩虹楼${base} ${subsidy > 0 ? `+ 琛ヨ创楼${subsidy.toFixed(1)}` : '(鏃犺ˉ璐?'}
+            基础¥${base} ${subsidy > 0 ? `+ 补贴¥${subsidy.toFixed(1)}` : '(无补贴)'}
           </div>
         </div>
         <div class="order-price">
-          <div class="total">楼${total.toFixed(1)}</div>
+          <div class="total">¥${total.toFixed(1)}</div>
           <div class="breakdown">${o.time || ''}</div>
         </div>
       </div>
@@ -1508,25 +1516,25 @@ function renderOrderList() {
   `}).join('') + `
     ${isGuaranteed ? `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:6px;background:rgba(251,191,36,0.08);border:1px dashed rgba(251,191,36,0.4);border-radius:var(--radius-sm);font-size:13px;">
-      <span style="color:#fbbf24;">馃洝锔?淇濆簳琛ヨ冻 (鍘熉?{totalWage.toFixed(1)} 鈫?楼${BASE_GUARANTEE}.0)</span>
-      <span style="color:#fbbf24;font-weight:700;">+楼${(BASE_GUARANTEE - totalWage).toFixed(1)}</span>
+      <span style="color:#fbbf24;">🛡️ 保底补足 (原¥${totalWage.toFixed(1)} → ¥${BASE_GUARANTEE}.0)</span>
+      <span style="color:#fbbf24;font-weight:700;">+¥${(BASE_GUARANTEE - totalWage).toFixed(1)}</span>
     </div>
     ` : ''}
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:6px;background:rgba(224,90,90,0.06);border:1px dashed rgba(224,90,90,0.3);border-radius:var(--radius-sm);font-size:13px;">
-      <span style="color:#e05a5a;">馃洝锔?淇濋櫓鎵ｈ垂</span>
-      <span style="color:#e05a5a;font-weight:700;">-楼${insurance}.00</span>
+      <span style="color:#e05a5a;">🛡️ 保险扣费</span>
+      <span style="color:#e05a5a;font-weight:700;">-¥${insurance}.00</span>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:4px;background:rgba(74,222,128,0.06);border:1px dashed rgba(74,222,128,0.3);border-radius:var(--radius-sm);font-size:13px;">
-      <span style="color:var(--green);">馃挵 浠婃棩鍑€鏀跺叆</span>
-      <span style="color:var(--green);font-weight:700;font-size:15px;">楼${netWage.toFixed(1)}</span>
+      <span style="color:var(--green);">💰 今日净收入</span>
+      <span style="color:var(--green);font-weight:700;font-size:15px;">¥${netWage.toFixed(1)}</span>
     </div>
   `;
 
-  // 缁戝畾婊戝姩浜嬩欢
+  // 绑定滑动事件
   bindSwipeEvents();
 }
 
-// 鈹€鈹€ 婊戝姩鍒犻櫎 鈹€鈹€
+// ── 滑动删除 ──
 let swipeState = { el: null, startX: 0, startY: 0, offsetX: 0, swiped: false };
 let _swipeDocBound = false;
 
@@ -1536,7 +1544,7 @@ function bindSwipeEvents() {
     card.addEventListener('touchmove', onSwipeMove, { passive: false });
     card.addEventListener('touchend', onSwipeEnd);
     
-    // 鐐瑰嚮宸插睍寮€鐨勫崱鐗囨椂鏀跺洖
+    // 点击已展开的卡片时收回
     card.addEventListener('click', function(e) {
       if (card.classList.contains('swiped')) {
         e.preventDefault();
@@ -1556,7 +1564,7 @@ function bindSwipeEvents() {
 }
 
 function onSwipeStart(e) {
-  // 濡傛灉宸叉湁鍏朵粬鍗＄墖灞曞紑锛屽厛鏀跺洖
+  // 如果已有其他卡片展开，先收回
   if (swipeState.swiped && swipeState.el !== this) {
     resetSwipe();
   }
@@ -1571,7 +1579,7 @@ function onSwipeMove(e) {
   const dx = e.touches[0].clientX - swipeState.startX;
   const dy = e.touches[0].clientY - swipeState.startY;
 
-  // 姘村钩婊戝姩涓轰富鏃舵墠澶勭悊
+  // 水平滑动为主时才处理
   if (Math.abs(dx) > Math.abs(dy) && dx < 0) {
     e.preventDefault();
     const offset = Math.max(dx, -90);
@@ -1585,12 +1593,12 @@ function onSwipeEnd() {
   swipeState.el.style.transition = 'transform .25s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
   if (swipeState.offsetX < -45) {
-    // 灞曞紑鍒犻櫎
+    // 展开删除
     swipeState.el.style.transform = 'translateX(-80px)';
     swipeState.el.classList.add('swiped');
     swipeState.swiped = true;
   } else {
-    // 鏀跺洖
+    // 收回
     resetSwipe();
   }
 }
@@ -1606,7 +1614,7 @@ function resetSwipe() {
   swipeState.swiped = false;
 }
 
-// 鐐瑰嚮鍒犻櫎鑳屾櫙瑙﹀彂鍒犻櫎
+// 点击删除背景触发删除
 document.getElementById('orderList').addEventListener('click', function(e) {
   const bg = e.target.closest('.order-swipe-bg');
   if (bg) {
@@ -1617,39 +1625,42 @@ document.getElementById('orderList').addEventListener('click', function(e) {
   }
 });
 
-// 鈹€鈹€ 鏁版嵁澶囦唤涓庢仮澶?鈹€鈹€
-// 涓€閿鍒讹細澶嶅埗鏁版嵁鍒板壀璐存澘锛屾崲閾炬帴鍚庣矘璐村嵆鍙仮澶?async function copyData() {
+// ── 数据备份与恢复 ──
+// 一键复制：复制数据到剪贴板，换链接后粘贴即可恢复
+async function copyData() {
   const data = loadData();
   const json = JSON.stringify(data);
   try {
     await navigator.clipboard.writeText(json);
-    showToast('宸插鍒跺埌鍓创鏉?鉁擄紙鍘绘柊閾炬帴鐐广€岀矘璐存暟鎹€嶆仮澶嶏級');
+    showToast('已复制到剪贴板 ✓（去新链接点「粘贴数据」恢复）');
   } catch (e) {
-    // 闄嶇骇鏂规锛氭樉绀烘枃鏈璁╃敤鎴锋墜鍔ㄥ鍒?    const ta = document.createElement('textarea');
+    // 降级方案：显示文本框让用户手动复制
+    const ta = document.createElement('textarea');
     ta.value = json;
     ta.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:200px;z-index:9999;font-size:12px;padding:10px;border:2px solid var(--accent);border-radius:8px;';
     document.body.appendChild(ta);
     ta.select();
-    showToast('璇锋墜鍔ㄥ叏閫夊鍒舵枃鏈鍐呭');
+    showToast('请手动全选复制文本框内容');
     setTimeout(() => ta.remove(), 30000);
   }
 }
 
 function pasteData() {
-  const text = prompt('璇风矘璐翠箣鍓嶅鍒剁殑鏁版嵁锛堝湪鏂伴摼鎺ョ偣銆屽鍒舵暟鎹€嶅悗绮樿创鍒版澶勶級锛?);
+  const text = prompt('请粘贴之前复制的数据（在新链接点「复制数据」后粘贴到此处）：');
   if (!text) return;
   try {
     const data = JSON.parse(text);
     const dates = Object.keys(data);
-    if (dates.length === 0) { showToast('鏁版嵁涓虹┖'); return; }
+    if (dates.length === 0) { showToast('数据为空'); return; }
     saveData(data);
     renderAll();
     updateDataStats();
-    showToast(`鎭㈠鎴愬姛 鉁?(${dates.length}澶╂暟鎹?`);
-    // 鑷姩鍚屾鍒颁簯绔?    _syncing = false;
+    showToast(`恢复成功 ✓ (${dates.length}天数据)`);
+    // 自动同步到云端
+    _syncing = false;
     pushToCloud(data);
   } catch (e) {
-    showToast('鏁版嵁鏍煎紡閿欒锛岃閲嶆柊澶嶅埗');
+    showToast('数据格式错误，请重新复制');
   }
 }
 
@@ -1657,12 +1668,12 @@ function exportData() {
   const data = loadData();
   const dates = Object.keys(data);
   if (dates.length === 0) {
-    showToast('鏆傛棤鏁版嵁鍙鍑?);
+    showToast('暂无数据可导出');
     return;
   }
 
   const exportObj = {
-    app: '绉掗€侀獞澹伐璧勭粺璁?,
+    app: '秒送骑士工资统计',
     exportedAt: new Date().toISOString(),
     version: '1.0',
     data: data
@@ -1676,7 +1687,7 @@ function exportData() {
   a.download = `rider-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast('澶囦唤宸蹭笅杞?鉁?);
+  showToast('备份已下载 ✓');
 }
 
 function importData(input) {
@@ -1688,7 +1699,7 @@ function importData(input) {
     try {
       const imported = JSON.parse(e.target.result);
       if (!imported.data || typeof imported.data !== 'object') {
-        showToast('澶囦唤鏂囦欢鏍煎紡鏃犳晥');
+        showToast('备份文件格式无效');
         return;
       }
 
@@ -1696,19 +1707,21 @@ function importData(input) {
       const currentDates = Object.keys(currentData);
 
       if (currentDates.length > 0) {
-        if (!confirm(`褰撳墠宸叉湁 ${currentDates.length} 澶╃殑鏁版嵁銆俓n\n閫夋嫨"纭畾"灏嗗悎骞跺鍏ワ紙淇濈暀鐜版湁鏁版嵁锛塡n閫夋嫨"鍙栨秷"灏嗘斁寮冨鍏)) return;
+        if (!confirm(`当前已有 ${currentDates.length} 天的数据。\n\n选择"确定"将合并导入（保留现有数据）\n选择"取消"将放弃导入`)) return;
       }
 
-      // 鍚堝苟鏁版嵁锛氬鍏ョ殑鏁版嵁瑕嗙洊鍚屾棩鏈?      const merged = { ...currentData, ...imported.data };
+      // 合并数据：导入的数据覆盖同日期
+      const merged = { ...currentData, ...imported.data };
       saveData(merged);
       renderAll();
       updateDataStats();
-      showToast(`瀵煎叆鎴愬姛 鉁?(${Object.keys(imported.data).length}澶╂暟鎹?`);
-      // 鑷姩鍚屾鍒颁簯绔?      _syncing = false;
+      showToast(`导入成功 ✓ (${Object.keys(imported.data).length}天数据)`);
+      // 自动同步到云端
+      _syncing = false;
       pushToCloud(merged);
     } catch (err) {
-      console.error('瀵煎叆澶辫触:', err);
-      showToast('瀵煎叆澶辫触锛屾枃浠舵牸寮忛敊璇?);
+      console.error('导入失败:', err);
+      showToast('导入失败，文件格式错误');
     }
   };
   reader.readAsText(file);
@@ -1732,21 +1745,22 @@ function updateDataStats() {
   const statusEl = document.getElementById('storageStatus');
 
   if (dates.length === 0) {
-    statsEl.textContent = '鏆傛棤鏁版嵁';
+    statsEl.textContent = '暂无数据';
   } else {
-    statsEl.textContent = `鍏?${dates.length} 澶?路 ${totalOrders} 鍗?路 鍑€鏀跺叆 楼${totalWage.toFixed(1)}`;
+    statsEl.textContent = `共 ${dates.length} 天 · ${totalOrders} 单 · 净收入 ¥${totalWage.toFixed(1)}`;
     const lastSync = localStorage.getItem('_cloud_last_sync');
     if (lastSync) {
       const ago = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
-      const agoStr = ago < 60 ? '鍒氬垰' : ago < 3600 ? `${Math.floor(ago/60)}鍒嗛挓鍓峘 : `${Math.floor(ago/3600)}灏忔椂鍓峘;
-      statsEl.textContent += ` 路 涓婃鍚屾${agoStr}`;
+      const agoStr = ago < 60 ? '刚刚' : ago < 3600 ? `${Math.floor(ago/60)}分钟前` : `${Math.floor(ago/3600)}小时前`;
+      statsEl.textContent += ` · 上次同步${agoStr}`;
     }
   }
 }
 
-// 鈹€鈹€ 鏁版嵁澶囦唤/鎭㈠锛氶€氳繃 JSON 鏂囦欢瀵煎嚭瀵煎叆 鈹€鈹€
-// 鏁版嵁鑷姩淇濆瓨鍒版祻瑙堝櫒鏈湴瀛樺偍锛屽埛鏂?閲嶅紑涓嶄細涓㈠け
-// 闇€瑕佹崲璁惧鏃讹細鍏堢偣銆屽浠芥暟鎹€嶄笅杞?鈫?鏂拌澶囩偣銆屾仮澶嶆暟鎹€嶄笂浼?
+// ── 数据备份/恢复：通过 JSON 文件导出导入 ──
+// 数据自动保存到浏览器本地存储，刷新/重开不会丢失
+// 需要换设备时：先点「备份数据」下载 → 新设备点「恢复数据」上传
+
 function addOrder(distance, optTime) {
   const d = parseFloat(distance);
   if (isNaN(d) || d < 0) return false;
@@ -1784,10 +1798,10 @@ function deleteOrder(id) {
 }
 
 function clearToday() {
-  if (confirm(`纭畾瑕佹竻绌?${currentDate === getToday() ? '浠婂ぉ' : currentDate} 鐨勬墍鏈夎鍗曡褰曞悧锛熸鎿嶄綔涓嶅彲鎭㈠銆俙)) {
+  if (confirm(`确定要清空 ${currentDate === getToday() ? '今天' : currentDate} 的所有订单记录吗？此操作不可恢复。`)) {
     saveDayOrders(currentDate, []);
     renderAll();
-    showToast('宸叉竻绌?);
+    showToast('已清空');
   }
 }
 
@@ -1796,34 +1810,35 @@ function moveOrders() {
   if (orders.length === 0) return;
 
   const targetDate = prompt(
-    `褰撳墠鏃ユ湡锛?{currentDate}锛堝叡 ${orders.length} 鍗曪級\n璇疯緭鍏ョ洰鏍囨棩鏈燂紙鏍煎紡锛歒YYY-MM-DD锛夛細`,
+    `当前日期：${currentDate}（共 ${orders.length} 单）\n请输入目标日期（格式：YYYY-MM-DD）：`,
     ''
   );
 
   if (!targetDate) return;
 
-  // 楠岃瘉鏃ユ湡鏍煎紡
+  // 验证日期格式
   if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
-    showToast('鏃ユ湡鏍煎紡閿欒锛岃浣跨敤 YYYY-MM-DD 鏍煎紡');
+    showToast('日期格式错误，请使用 YYYY-MM-DD 格式');
     return;
   }
 
   if (targetDate === currentDate) {
-    showToast('鐩爣鏃ユ湡涓庡綋鍓嶆棩鏈熺浉鍚?);
+    showToast('目标日期与当前日期相同');
     return;
   }
 
-  if (!confirm(`纭灏?${currentDate} 鐨?${orders.length} 鍗曡鍗曠Щ鑷?${targetDate}锛焋)) return;
+  if (!confirm(`确认将 ${currentDate} 的 ${orders.length} 单订单移至 ${targetDate}？`)) return;
 
-  // 鍚堝苟鍒扮洰鏍囨棩鏈?  const targetOrders = getDayOrders(targetDate);
+  // 合并到目标日期
+  const targetOrders = getDayOrders(targetDate);
   const merged = [...targetOrders, ...orders];
   saveDayOrders(targetDate, merged);
 
-  // 娓呯┖褰撳墠鏃ユ湡
+  // 清空当前日期
   saveDayOrders(currentDate, []);
 
   renderAll();
-  showToast(`宸茬Щ鑷?${targetDate} 鉁揱);
+  showToast(`已移至 ${targetDate} ✓`);
 }
 
 function changeDate(delta) {
@@ -1833,7 +1848,7 @@ function changeDate(delta) {
   renderAll();
 }
 
-// 鈹€鈹€ 鏃ュ巻閫夋嫨鍣?鈹€鈹€
+// ── 日历选择器 ──
 let calendarYear, calendarMonth;
 
 function openCalendar() {
@@ -1856,7 +1871,7 @@ function changeCalendarMonth(delta) {
 }
 
 function renderCalendar() {
-  document.getElementById('calendarMonth').textContent = `${calendarYear}骞?{calendarMonth + 1}鏈坄;
+  document.getElementById('calendarMonth').textContent = `${calendarYear}年${calendarMonth + 1}月`;
 
   const allData = loadData();
   const today = getToday();
@@ -1868,7 +1883,7 @@ function renderCalendar() {
   let monthTotalOrders = 0;
   let monthTotalNet = 0;
 
-  // 涓婃湀濉厖
+  // 上月填充
   for (let i = firstDay - 1; i >= 0; i--) {
     const day = prevMonthDays - i;
     const m = calendarMonth === 0 ? 12 : calendarMonth;
@@ -1877,7 +1892,7 @@ function renderCalendar() {
     html += renderDayCell(day, dateStr, 'other-month', allData, today);
   }
 
-  // 鏈湀
+  // 本月
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     let cls = '';
@@ -1893,7 +1908,7 @@ function renderCalendar() {
     html += renderDayCell(day, dateStr, cls, allData, today);
   }
 
-  // 涓嬫湀濉厖
+  // 下月填充
   const remaining = 42 - (firstDay + daysInMonth);
   for (let day = 1; day <= remaining; day++) {
     const m = calendarMonth === 11 ? 1 : calendarMonth + 2;
@@ -1903,11 +1918,12 @@ function renderCalendar() {
   }
 
   document.getElementById('calendarGrid').innerHTML = html;
-  // 搴曢儴鏈堝害姹囨€?  const summaryEl = document.getElementById('calendarSummary');
+  // 底部月度汇总
+  const summaryEl = document.getElementById('calendarSummary');
   if (monthTotalOrders > 0) {
-    summaryEl.innerHTML = `鏈湀 <strong>${monthTotalOrders}鍗?/strong> 路 鍑€鏀跺叆 <strong>楼${monthTotalNet.toFixed(0)}</strong>`;
+    summaryEl.innerHTML = `本月 <strong>${monthTotalOrders}单</strong> · 净收入 <strong>¥${monthTotalNet.toFixed(0)}</strong>`;
   } else {
-    summaryEl.innerHTML = '鏈湀鏆傛棤璁板綍';
+    summaryEl.innerHTML = '本月暂无记录';
   }
 }
 
@@ -1919,7 +1935,7 @@ function renderDayCell(day, dateStr, cls, allData, today) {
     const gross = dayOrders.reduce((s, o) => s + (o.total || 0), 0);
     const effectiveGross = applyGuarantee(gross, true);
     const net = effectiveGross - INSURANCE_FEE;
-    stats = `<span class="day-stats">${count}鍗?楼${net.toFixed(0)}</span>`;
+    stats = `<span class="day-stats">${count}单 ¥${net.toFixed(0)}</span>`;
   }
   return `<button class="calendar-day${cls}" onclick="selectCalendarDate('${dateStr}')">
     <span class="day-num">${day}</span>${stats}
@@ -1932,22 +1948,22 @@ function selectCalendarDate(dateStr) {
   renderAll();
 }
 
-// 鐐瑰嚮閬僵鍏抽棴鏃ュ巻
+// 点击遮罩关闭日历
 document.getElementById('calendarOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeCalendar();
 });
 
-// 鈹€鈹€ 鎵嬪姩娣诲姞妯℃€佹 鈹€鈹€
+// ── 手动添加模态框 ──
 let modalMode = 'single';
 
 function openAddModal(mode) {
   modalMode = mode;
   editingOrderId = null;
 
-  document.getElementById('modalTitle').textContent = mode === 'single' ? '娣诲姞璁㈠崟' : '鎵归噺褰曞叆';
+  document.getElementById('modalTitle').textContent = mode === 'single' ? '添加订单' : '批量录入';
   document.getElementById('singleInput').style.display = mode === 'single' ? 'block' : 'none';
   document.getElementById('batchInput').style.display = mode === 'batch' ? 'block' : 'none';
-  document.getElementById('confirmBtn').textContent = '纭娣诲姞';
+  document.getElementById('confirmBtn').textContent = '确认添加';
 
   document.getElementById('distanceInput').value = '';
   document.getElementById('batchInputField').value = '';
@@ -1978,11 +1994,11 @@ document.getElementById('distanceInput').addEventListener('input', function() {
   }
   const r = calcOrder(d);
   document.getElementById('pricePreview').textContent =
-    `棰勪及锛氬熀纭€楼${r.base} + 琛ヨ创楼${r.subsidy.toFixed(1)} = 楼${r.total.toFixed(1)}`;
+    `预估：基础¥${r.base} + 补贴¥${r.subsidy.toFixed(1)} = ¥${r.total.toFixed(1)}`;
 });
 
 document.getElementById('batchInputField').addEventListener('input', function() {
-  const distances = this.value.split(/[\s,锛屻€乗n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)));
+  const distances = this.value.split(/[\s,，、\n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)));
   const preview = document.getElementById('batchPreview');
   const hint = document.getElementById('batchPreviewHint');
 
@@ -1996,10 +2012,10 @@ document.getElementById('batchInputField').addEventListener('input', function() 
   preview.innerHTML = distances.map(d => {
     const r = calcOrder(parseFloat(d));
     totalWage += r.total;
-    return `<span class="batch-tag">${d}km 鈫?楼${r.total.toFixed(1)}</span>`;
+    return `<span class="batch-tag">${d}km → ¥${r.total.toFixed(1)}</span>`;
   }).join('');
 
-  hint.textContent = `鍏?${distances.length} 鍗曪紝鍚堣 楼${totalWage.toFixed(1)}`;
+  hint.textContent = `共 ${distances.length} 单，合计 ¥${totalWage.toFixed(1)}`;
 });
 
 function confirmAdd() {
@@ -2010,25 +2026,25 @@ function confirmAdd() {
       document.getElementById('distanceInput').select();
       return;
     }
-    showToast('宸叉坊鍔?鉁?);
+    showToast('已添加 ✓');
     document.getElementById('distanceInput').value = '';
     document.getElementById('pricePreview').textContent = '';
     setTimeout(() => document.getElementById('distanceInput').focus(), 100);
   } else {
     const raw = document.getElementById('batchInputField').value;
-    const distances = raw.split(/[\s,锛屻€乗n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)) && parseFloat(s) >= 0);
+    const distances = raw.split(/[\s,，、\n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)) && parseFloat(s) >= 0);
     if (distances.length === 0) {
       document.getElementById('batchInputField').focus();
       return;
     }
     let count = 0;
     distances.forEach(d => { if (addOrder(d)) count++; });
-    showToast(`宸叉坊鍔?${count} 鍗?鉁揱);
+    showToast(`已添加 ${count} 单 ✓`);
     closeModal();
   }
 }
 
-// 鈹€鈹€ OCR 鏅鸿兘璇嗗埆 鈹€鈹€
+// ── OCR 智能识别 ──
 let ocrCurrentTab = 'photo';
 let ocrVideoFile = null;
 
@@ -2049,13 +2065,13 @@ function closeOcrModal() {
 
 function switchOcrTab(tab) {
   ocrCurrentTab = tab;
-  // 鏇存柊tab鏍峰紡
+  // 更新tab样式
   document.querySelectorAll('.ocr-tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`.ocr-tab[data-tab="${tab}"]`).classList.add('active');
-  // 鏇存柊鍐呭
+  // 更新内容
   document.querySelectorAll('.ocr-tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
-  // 閲嶇疆鍏辩敤UI
+  // 重置共用UI
   document.getElementById('ocrPreviewImg').style.display = 'none';
   document.getElementById('ocrProgress').style.display = 'none';
   document.getElementById('ocrResults').style.display = 'none';
@@ -2063,7 +2079,7 @@ function switchOcrTab(tab) {
   document.getElementById('ocrConfirmBtn').disabled = true;
   document.getElementById('ocrFileInput').value = '';
   document.getElementById('ocrVideoInput').value = '';
-  // 瑙嗛鐩稿叧
+  // 视频相关
   document.getElementById('videoUploadArea').style.display = 'block';
   document.getElementById('ocrVideoPreview').style.display = 'none';
   document.getElementById('videoStartBtn').style.display = 'none';
@@ -2099,13 +2115,13 @@ function handleOcrFile(input) {
   document.getElementById('ocrNoResult').style.display = 'none';
   ocrDistances = [];
 
-  // 澶氬浘閫愪竴澶勭悊
+  // 多图逐一处理
   processMultipleImages(files, 0);
 }
 
 async function processMultipleImages(files, index) {
   if (index >= files.length) {
-    // 鍏ㄩ儴澶勭悊瀹屾瘯
+    // 全部处理完毕
     if (ocrDistances.length > 0) {
       renderOcrResults();
     } else {
@@ -2118,10 +2134,10 @@ async function processMultipleImages(files, index) {
   const statusEl = document.getElementById('ocrStatus');
   const percentEl = document.getElementById('ocrPercent');
   progressEl.style.display = 'block';
-  statusEl.textContent = `姝ｅ湪澶勭悊绗?${index + 1}/${files.length} 寮犲浘鐗?..`;
+  statusEl.textContent = `正在处理第 ${index + 1}/${files.length} 张图片...`;
   percentEl.textContent = '';
 
-  // 鏄剧ず褰撳墠鍥剧墖棰勮
+  // 显示当前图片预览
   const reader = new FileReader();
   const dataUrl = await new Promise(resolve => {
     reader.onload = e => resolve(e.target.result);
@@ -2136,28 +2152,30 @@ async function processMultipleImages(files, index) {
     const worker = await Tesseract.createWorker('chi_sim', 1);
     await worker.setParameters({
       tessedit_pageseg_mode: '6',
-      tessedit_char_whitelist: '0123456789.km鍏噷KMMm: ',
+      tessedit_char_whitelist: '0123456789.km公里KMMm: ',
     });
     const ret = await worker.recognize(processed);
     await worker.terminate();
 
     const text = ret.data.text;
-    console.log(`鍥剧墖${index+1} OCR缁撴灉:`, text);
+    console.log(`图片${index+1} OCR结果:`, text);
 
     const results = extractDistances(text);
-    // 鍚堝苟缁撴灉锛屽幓閲嶏紙鎸夎窛绂?鏃堕棿缁勫悎鍘婚噸锛?    for (const r of results) {
+    // 合并结果，去重（按距离+时间组合去重）
+    for (const r of results) {
       const exists = ocrDistances.some(d => d.distance === r.distance && d.time === r.time);
       if (!exists) ocrDistances.push(r);
     }
   } catch (err) {
-    console.error(`鍥剧墖${index+1} OCR澶辫触:`, err);
+    console.error(`图片${index+1} OCR失败:`, err);
   }
 
-  // 鐭殏寤惰繜鍚庡鐞嗕笅涓€寮?  await new Promise(r => setTimeout(r, 300));
+  // 短暂延迟后处理下一张
+  await new Promise(r => setTimeout(r, 300));
   processMultipleImages(files, index + 1);
 }
 
-// 鈹€鈹€ 褰曞睆澶勭悊 鈹€鈹€
+// ── 录屏处理 ──
 function handleOcrVideo(input) {
   const file = input.files[0];
   if (!file) return;
@@ -2184,17 +2202,19 @@ async function startVideoOCR() {
   document.getElementById('ocrNoResult').style.display = 'none';
 
   try {
-    // 姝ラ1: 鎻愬彇瑙嗛甯?    statusEl.textContent = '姝ｅ湪鎻愬彇瑙嗛甯?..';
+    // 步骤1: 提取视频帧
+    statusEl.textContent = '正在提取视频帧...';
     percentEl.textContent = '';
     const frames = await extractVideoFrames(ocrVideoFile, 1.5);
 
-    // 姝ラ2: 鍘婚噸锛堢浉浼煎抚鍚堝苟锛?    statusEl.textContent = '姝ｅ湪鍘婚噸...';
+    // 步骤2: 去重（相似帧合并）
+    statusEl.textContent = '正在去重...';
     const uniqueFrames = deduplicateFrames(frames);
 
-    // 姝ラ3: 閫愬抚OCR
+    // 步骤3: 逐帧OCR
     const allResults = [];
     for (let i = 0; i < uniqueFrames.length; i++) {
-      statusEl.textContent = `姝ｅ湪璇嗗埆绗?${i + 1}/${uniqueFrames.length} 甯?..`;
+      statusEl.textContent = `正在识别第 ${i + 1}/${uniqueFrames.length} 帧...`;
       percentEl.textContent = Math.round((i / uniqueFrames.length) * 100) + '%';
 
       const text = await ocrImage(uniqueFrames[i]);
@@ -2202,7 +2222,8 @@ async function startVideoOCR() {
       allResults.push(...dists);
     }
 
-    // 鍘婚噸锛堟寜璺濈+鏃堕棿缁勫悎锛?    const seen = new Set();
+    // 去重（按距离+时间组合）
+    const seen = new Set();
     ocrDistances = [];
     for (const r of allResults) {
       const key = `${r.distance}_${r.time}`;
@@ -2222,11 +2243,11 @@ async function startVideoOCR() {
       document.getElementById('ocrNoResult').style.display = 'block';
     }
   } catch (err) {
-    console.error('瑙嗛OCR澶辫触:', err);
+    console.error('视频OCR失败:', err);
     progressEl.style.display = 'none';
     startBtn.style.display = 'none';
     document.getElementById('ocrNoResult').style.display = 'block';
-    showToast('璇嗗埆澶辫触锛岃閲嶈瘯');
+    showToast('识别失败，请重试');
   }
 }
 
@@ -2244,7 +2265,8 @@ async function extractVideoFrames(file, intervalSec) {
       const ctx = canvas.getContext('2d');
       canvas.width = Math.min(video.videoWidth, 640);
       canvas.height = Math.min(video.videoHeight, 360);
-      // 淇濇寔瀹介珮姣?      const scale = Math.min(640 / video.videoWidth, 360 / video.videoHeight);
+      // 保持宽高比
+      const scale = Math.min(640 / video.videoWidth, 360 / video.videoHeight);
       canvas.width = Math.round(video.videoWidth * scale);
       canvas.height = Math.round(video.videoHeight * scale);
 
@@ -2254,7 +2276,7 @@ async function extractVideoFrames(file, intervalSec) {
       for (let t = 0; t < duration; t += intervalSec) {
         timestamps.push(t);
       }
-      // 鏈€澶氬彇30甯э紝閬垮厤澶勭悊澶參
+      // 最多取30帧，避免处理太慢
       const maxFrames = 30;
       const step = Math.max(1, Math.floor(timestamps.length / maxFrames));
       const sampledTimestamps = timestamps.filter((_, i) => i % step === 0).slice(0, maxFrames);
@@ -2272,7 +2294,7 @@ async function extractVideoFrames(file, intervalSec) {
 
     video.onerror = () => {
       URL.revokeObjectURL(video.src);
-      reject(new Error('瑙嗛鍔犺浇澶辫触'));
+      reject(new Error('视频加载失败'));
     };
   });
 }
@@ -2302,7 +2324,8 @@ function deduplicateFrames(frames) {
     });
   };
 
-  // 绠€鍖栫増锛氭瘮杈冪浉閭诲抚鐨勪寒搴﹀樊寮?  const getBrightness = (dataUrl) => {
+  // 简化版：比较相邻帧的亮度差异
+  const getBrightness = (dataUrl) => {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
@@ -2321,13 +2344,13 @@ function deduplicateFrames(frames) {
     });
   };
 
-  // 鍚屾澶勭悊锛氬浜庡幓閲嶄娇鐢ㄧ畝鍗曠殑閲囨牱鏂规硶
-  // 鎴戜滑鐩存帴鍙栭棿闅斿抚锛屼笉鐢ㄥ鏉傜殑鍘婚噸
-  // 瀹為檯OCR鏃跺鏋滀袱甯ц瘑鍒粨鏋滅浉鍚岋紝鑷劧浼氳鍘婚噸
+  // 同步处理：对于去重使用简单的采样方法
+  // 我们直接取间隔帧，不用复杂的去重
+  // 实际OCR时如果两帧识别结果相同，自然会被去重
   return frames;
 }
 
-// 鈹€鈹€ 鍥剧墖棰勫鐞嗭細澧炲己瀵规瘮搴?浜屽€煎寲锛屽ぇ骞呮彁鍗嘜CR鍑嗙‘鐜?鈹€鈹€
+// ── 图片预处理：增强对比度+二值化，大幅提升OCR准确率 ──
 async function preprocessImage(imageDataUrl) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -2335,31 +2358,35 @@ async function preprocessImage(imageDataUrl) {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // 鏀惧ぇ鍒拌嚦灏?1200px 瀹斤紝鎻愰珮OCR璇嗗埆鐜?      const targetWidth = Math.max(img.width, 1200);
+      // 放大到至少 1200px 宽，提高OCR识别率
+      const targetWidth = Math.max(img.width, 1200);
       const scale = targetWidth / img.width;
       canvas.width = targetWidth;
       canvas.height = Math.round(img.height * scale);
 
-      // 楂樿川閲忕缉鏀?      ctx.imageSmoothingEnabled = true;
+      // 高质量缩放
+      ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
 
-      // 鍏堣绠楀钩鍧囦寒搴︾敤浜庤嚜閫傚簲闃堝€?      let totalBrightness = 0;
+      // 先计算平均亮度用于自适应阈值
+      let totalBrightness = 0;
       for (let i = 0; i < data.length; i += 4) {
         totalBrightness += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
       }
       const avgBrightness = totalBrightness / (data.length / 4);
       const threshold = Math.max(100, Math.min(180, avgBrightness * 0.85));
 
-      // 澧炲己瀵规瘮搴?+ 鑷€傚簲浜屽€煎寲
+      // 增强对比度 + 自适应二值化
       for (let i = 0; i < data.length; i += 4) {
         const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-        // 瀵规瘮搴︽媺浼?        const contrast = 1.6;
+        // 对比度拉伸
+        const contrast = 1.6;
         const enhanced = Math.min(255, Math.max(0, (gray - 128) * contrast + 128));
-        // 浜屽€煎寲锛氭枃瀛楀彉榛?0)锛岃儗鏅彉鐧?255)
+        // 二值化：文字变黑(0)，背景变白(255)
         const binary = enhanced > threshold ? 255 : 0;
         data[i] = data[i + 1] = data[i + 2] = binary;
       }
@@ -2372,13 +2399,14 @@ async function preprocessImage(imageDataUrl) {
 }
 
 async function ocrImage(imageDataUrl) {
-  // 棰勫鐞嗗浘鐗?  const processed = await preprocessImage(imageDataUrl);
+  // 预处理图片
+  const processed = await preprocessImage(imageDataUrl);
 
   const worker = await Tesseract.createWorker('chi_sim', 1);
-  // 璁剧疆PSM涓?锛氬亣璁句负缁熶竴鐨勬枃鏈潡锛岄€傚悎APP鎴浘
+  // 设置PSM为6：假设为统一的文本块，适合APP截图
   await worker.setParameters({
     tessedit_pageseg_mode: '6',
-    tessedit_char_whitelist: '0123456789.km鍏噷KMMm: ',
+    tessedit_char_whitelist: '0123456789.km公里KMMm: ',
   });
   const ret = await worker.recognize(processed);
   await worker.terminate();
@@ -2391,43 +2419,43 @@ async function runOCR(imageDataUrl) {
   const percentEl = document.getElementById('ocrPercent');
 
   progressEl.style.display = 'block';
-  statusEl.textContent = '姝ｅ湪棰勫鐞嗗浘鐗?..';
+  statusEl.textContent = '正在预处理图片...';
   percentEl.textContent = '';
 
   try {
     const processed = await preprocessImage(imageDataUrl);
 
-    statusEl.textContent = '姝ｅ湪鍔犺浇璇嗗埆寮曟搸...';
+    statusEl.textContent = '正在加载识别引擎...';
     percentEl.textContent = '';
 
     const worker = await Tesseract.createWorker('chi_sim', 1, {
       logger: m => {
         if (m.status === 'recognizing text') {
-          statusEl.textContent = '姝ｅ湪璇嗗埆鏂囧瓧...';
+          statusEl.textContent = '正在识别文字...';
           percentEl.textContent = Math.round(m.progress * 100) + '%';
         } else if (m.status === 'loading tesseract core') {
-          statusEl.textContent = '鍔犺浇鏍稿績寮曟搸...';
+          statusEl.textContent = '加载核心引擎...';
         } else if (m.status === 'initializing tesseract') {
-          statusEl.textContent = '鍒濆鍖栧紩鎿?..';
+          statusEl.textContent = '初始化引擎...';
         } else if (m.status === 'loading language traineddata') {
-          statusEl.textContent = '鍔犺浇涓枃璇█鍖?..';
+          statusEl.textContent = '加载中文语言包...';
         } else if (m.status === 'initializing api') {
-          statusEl.textContent = '鍒濆鍖朅PI...';
+          statusEl.textContent = '初始化API...';
         }
       }
     });
 
     await worker.setParameters({
       tessedit_pageseg_mode: '6',
-      tessedit_char_whitelist: '0123456789.km鍏噷KMMm: ',
+      tessedit_char_whitelist: '0123456789.km公里KMMm: ',
     });
 
-    statusEl.textContent = '姝ｅ湪璇嗗埆...';
+    statusEl.textContent = '正在识别...';
     const ret = await worker.recognize(processed);
     await worker.terminate();
 
     const text = ret.data.text;
-    console.log('OCR鍘熷缁撴灉:', text);
+    console.log('OCR原始结果:', text);
 
     ocrDistances = extractDistances(text);
 
@@ -2439,23 +2467,25 @@ async function runOCR(imageDataUrl) {
       document.getElementById('ocrNoResult').style.display = 'block';
     }
   } catch (err) {
-    console.error('OCR澶辫触:', err);
+    console.error('OCR失败:', err);
     progressEl.style.display = 'none';
     document.getElementById('ocrNoResult').style.display = 'block';
-    showToast('璇嗗埆澶辫触锛岃閲嶈瘯');
+    showToast('识别失败，请重试');
   }
 }
 
 function extractDistances(text) {
   const results = [];
 
-  // 娓呯悊鏂囨湰锛氱粺涓€鍏ㄨ鏁板瓧鍜屽崟浣?  const cleaned = text
-    .replace(/[锛?锛橾/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/[锛辑锝嬶綅]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/[锛庛€俔/g, '.');
+  // 清理文本：统一全角数字和单位
+  const cleaned = text
+    .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[ＫＭｋｍ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[．。]/g, '.');
 
-  // 鈹€鈹€ 浠庢埅鍥炬牸寮忓垎鏋愶細姣忓崟鍖呭惈 "HH:MM" 鏃堕棿 + "X.Xkm" 璺濈 鈹€鈹€
-  // 鎻愬彇鎵€鏈夋椂闂达紙HH:MM鏍煎紡锛?  const times = [];
+  // ── 从截图格式分析：每单包含 "HH:MM" 时间 + "X.Xkm" 距离 ──
+  // 提取所有时间（HH:MM格式）
+  const times = [];
   for (const m of cleaned.matchAll(/\b(\d{1,2}):(\d{2})\b/g)) {
     const h = parseInt(m[1]), min = parseInt(m[2]);
     if (h >= 0 && h <= 23 && min >= 0 && min <= 59) {
@@ -2464,35 +2494,41 @@ function extractDistances(text) {
     }
   }
 
-  // 鎻愬彇鎵€鏈夎窛绂伙紙X.Xkm 鎴?X.X鍏噷 鏍煎紡锛?  const distances = [];
-  for (const m of cleaned.matchAll(/(\d+\.?\d*)\s*(?:km|鍏噷|KM|Km|kM)/gi)) {
+  // 提取所有距离（X.Xkm 或 X.X公里 格式）
+  const distances = [];
+  for (const m of cleaned.matchAll(/(\d+\.?\d*)\s*(?:km|公里|KM|Km|kM)/gi)) {
     const num = parseFloat(m[1]);
     if (num >= 0 && num < 100) {
       distances.push(num);
     }
   }
 
-  // 濡傛灉鎵惧埌璺濈鍜屾椂闂寸殑鏁伴噺鐩歌繎锛屽皾璇曢厤瀵?  if (distances.length > 0 && times.length > 0 && Math.abs(distances.length - times.length) <= 3) {
+  // 如果找到距离和时间的数量相近，尝试配对
+  if (distances.length > 0 && times.length > 0 && Math.abs(distances.length - times.length) <= 3) {
     const count = Math.min(distances.length, times.length);
     for (let i = 0; i < count; i++) {
       results.push({ distance: distances[i], time: times[i] });
     }
-    // 澶氫綑鐨勮窛绂?    for (let i = count; i < distances.length; i++) {
+    // 多余的距离
+    for (let i = count; i < distances.length; i++) {
       results.push({ distance: distances[i], time: '' });
     }
   } else if (distances.length > 0) {
-    // 鍙湁璺濈锛屾病鏈夋椂闂?    for (const d of distances) {
+    // 只有距离，没有时间
+    for (const d of distances) {
       results.push({ distance: d, time: '' });
     }
   }
 
-  // 濡傛灉璺濈涓虹┖锛屽厹搴曪細鎻愬彇鎵€鏈?-30涔嬮棿鐨勬暟瀛?  if (results.length === 0) {
+  // 如果距离为空，兜底：提取所有0-30之间的数字
+  if (results.length === 0) {
     const allNums = cleaned.match(/\d+\.?\d*/g);
     if (allNums) {
       for (const n of allNums) {
         const num = parseFloat(n);
         if (num >= 0 && num <= 30) {
-          // 妫€鏌ユ槸鍚﹂噸澶?          if (!results.some(r => r.distance === num && r.time === '')) {
+          // 检查是否重复
+          if (!results.some(r => r.distance === num && r.time === '')) {
             results.push({ distance: num, time: '' });
           }
         }
@@ -2500,7 +2536,8 @@ function extractDistances(text) {
     }
   }
 
-  // 鎸夎窛绂绘帓搴?  results.sort((a, b) => a.distance - b.distance);
+  // 按距离排序
+  results.sort((a, b) => a.distance - b.distance);
   return results;
 }
 
@@ -2520,15 +2557,15 @@ function renderOcrResults() {
           ${timeStr}
         </div>
         <input type="number" value="${item.distance}" step="0.1" min="0" data-idx="${i}" onchange="updateOcrDistance(${i}, this.value)">
-        <div class="price-preview">楼${r.total.toFixed(1)}</div>
-        <button class="remove-btn" onclick="removeOcrDistance(${i})">鉁?/button>
+        <div class="price-preview">¥${r.total.toFixed(1)}</div>
+        <button class="remove-btn" onclick="removeOcrDistance(${i})">✕</button>
       </div>
     `;
   }).join('');
 
   resultsDiv.style.display = 'block';
   confirmBtn.disabled = false;
-  confirmBtn.textContent = `纭娣诲姞 (${ocrDistances.length}鍗?`;
+  confirmBtn.textContent = `确认添加 (${ocrDistances.length}单)`;
 }
 
 function updateOcrDistance(idx, val) {
@@ -2555,11 +2592,11 @@ function confirmOcrAdd() {
   ocrDistances.forEach(item => {
     if (addOrder(item.distance, item.time)) count++;
   });
-  showToast(`宸叉坊鍔?${count} 鍗?鉁揱);
+  showToast(`已添加 ${count} 单 ✓`);
   closeOcrModal();
 }
 
-// 鈹€鈹€ 閿洏鏀寔 鈹€鈹€
+// ── 键盘支持 ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeModal();
@@ -2571,7 +2608,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// 鐐瑰嚮閬僵鍏抽棴
+// 点击遮罩关闭
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
@@ -2579,7 +2616,7 @@ document.getElementById('ocrModalOverlay').addEventListener('click', function(e)
   if (e.target === this) closeOcrModal();
 });
 
-// 鈹€鈹€ Toast 鈹€鈹€
+// ── Toast ──
 let toastTimer;
 function showToast(msg) {
   const el = document.getElementById('toast');
@@ -2589,7 +2626,7 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 1500);
 }
 
-// 鈹€鈹€ 鍒濆鍖?鈹€鈹€
+// ── 初始化 ──
 (async function() {
   await initCloudSync();
   renderAll();
