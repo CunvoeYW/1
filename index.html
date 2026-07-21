@@ -274,44 +274,46 @@ body {
 /* ── Calendar ── */
 .calendar-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 250;
-  display: flex; align-items: center;
+  display: flex; align-items: flex-end;
   justify-content: center;
   opacity: 0; pointer-events: none;
-  transition: opacity .3s;
+  transition: opacity .25s;
 }
 .calendar-overlay.active {
   opacity: 1; pointer-events: auto;
 }
 .calendar-popup {
   background: linear-gradient(180deg, #1e1e1e 0%, #1a1a1a 100%);
-  border-radius: 24px;
-  width: 92%;
-  max-width: 380px;
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
-  transform: scale(0.92) translateY(10px);
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 -16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  transform: translateY(100%);
   transition: transform .35s cubic-bezier(0.32, 0.72, 0, 1);
   overflow: hidden;
 }
-.calendar-overlay.active .calendar-popup { transform: scale(1) translateY(0); }
+.calendar-overlay.active .calendar-popup { transform: translateY(0); }
 .calendar-popup-inner {
-  padding: 24px 20px 20px;
+  padding: 20px 16px 16px;
 }
 .calendar-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .calendar-header button {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   border: 1px solid rgba(255,255,255,0.08);
   background: rgba(255,255,255,0.04);
   color: var(--text);
-  border-radius: 12px;
+  border-radius: 11px;
   font-size: 13px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -334,11 +336,11 @@ body {
   padding: 0 2px;
 }
 .calendar-day {
-  height: 48px;
+  height: 42px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  border-radius: 12px;
-  font-size: 14px; font-weight: 600;
+  border-radius: 11px;
+  font-size: 13px; font-weight: 600;
   cursor: pointer;
   transition: all .15s;
   position: relative;
@@ -346,8 +348,8 @@ body {
   background: transparent;
   border: none;
   font-family: inherit;
-  padding: 4px 2px;
-  gap: 1px;
+  padding: 3px 2px;
+  gap: 0;
 }
 .calendar-day:hover { background: rgba(255,255,255,0.04); }
 .calendar-day:active { background: rgba(255,255,255,0.08); transform: scale(0.94); }
@@ -359,7 +361,7 @@ body {
 .calendar-day.today::after {
   content: ''; position: absolute;
   bottom: 4px; left: 50%; transform: translateX(-50%);
-  width: 4px; height: 4px; border-radius: 50%;
+  width: 3px; height: 3px; border-radius: 50%;
   background: var(--accent);
 }
 .calendar-day.selected {
@@ -372,16 +374,16 @@ body {
 }
 .calendar-day.has-data .day-num {
   background: rgba(74,222,128,0.15);
-  border-radius: 8px;
-  padding: 1px 7px;
+  border-radius: 7px;
+  padding: 0 6px;
   line-height: 1.4;
 }
 .calendar-day.selected.has-data .day-num {
   background: rgba(255,255,255,0.2);
 }
-.calendar-day .day-num { font-size: 13px; line-height: 1; }
+.calendar-day .day-num { font-size: 12px; line-height: 1; }
 .calendar-day .day-stats {
-  font-size: 9px; line-height: 1.1;
+  font-size: 8px; line-height: 1;
   color: var(--green);
   white-space: nowrap;
   overflow: hidden;
@@ -393,7 +395,8 @@ body {
 .calendar-day.today .day-stats { color: var(--accent); }
 .calendar-footer {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 16px));
   border-top: 1px solid rgba(255,255,255,0.06);
   background: rgba(255,255,255,0.02);
 }
@@ -405,18 +408,24 @@ body {
   font-weight: 600;
 }
 .calendar-close {
-  padding: 8px 18px;
+  padding: 7px 16px;
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
+  border-radius: 9px;
   background: rgba(255,255,255,0.04);
   color: var(--text2);
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 500;
   transition: all .15s;
 }
 .calendar-close:active { background: rgba(255,255,255,0.1); color: var(--text); }
+.calendar-drag-handle {
+  width: 36px; height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 10px auto;
+}
 .modal-overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.6);
@@ -717,6 +726,404 @@ body {
 }
 
 /* ── Responsive ── */
+@media (max-width: 480px) {
+  :root {
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .header {
+    padding: 12px 14px 10px;
+    background: linear-gradient(180deg, var(--bg) 80%, transparent);
+  }
+
+  .logo {
+    width: 32px; height: 32px;
+    font-size: 16px;
+  }
+
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    display: none;
+  }
+
+  .date-nav {
+    gap: 4px;
+    padding: 3px;
+  }
+
+  .date-nav button {
+    width: 28px; height: 28px;
+    font-size: 14px;
+  }
+
+  .date-nav .date-display {
+    font-size: 12px;
+    min-width: 55px;
+  }
+
+  .summary {
+    margin: 0 12px;
+    padding: 16px;
+  }
+
+  .summary-row {
+    gap: 8px;
+  }
+
+  .summary-row:nth-child(2),
+  .summary-row:nth-child(3) {
+    margin-top: 8px !important;
+  }
+
+  .summary-item {
+    padding: 11px 8px;
+  }
+
+  .summary-item .label {
+    font-size: 10px;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .summary-item .value {
+    font-size: 22px;
+    letter-spacing: -0.8px;
+  }
+
+  .summary-item .value.small {
+    font-size: 18px;
+  }
+
+  .summary-item .unit {
+    font-size: 11px;
+    margin-left: 1px;
+  }
+
+  .quick-bar {
+    margin: 10px 12px;
+    gap: 6px;
+  }
+
+  .quick-btn {
+    padding: 12px 6px;
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .quick-btn .icon {
+    font-size: 16px;
+  }
+
+  .order-section {
+    margin: 0 12px;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px));
+  }
+
+  .section-header {
+    margin-bottom: 8px;
+  }
+
+  .section-header h3 {
+    font-size: 13px;
+    gap: 4px;
+  }
+
+  .section-header .count-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+  }
+
+  .section-header .clear-btn {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .order-list {
+    gap: 4px;
+  }
+
+  .order-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .order-num {
+    width: 28px; height: 28px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .order-info .distance {
+    font-size: 14px;
+  }
+
+  .order-info .detail {
+    font-size: 10px;
+    margin-top: 1px;
+  }
+
+  .order-price .total {
+    font-size: 16px;
+  }
+
+  .order-price .breakdown {
+    font-size: 9px;
+  }
+
+  .order-swipe-bg {
+    padding-right: 16px;
+    font-size: 13px;
+  }
+
+  .empty {
+    padding: 30px 16px;
+  }
+
+  .empty .icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .empty p {
+    font-size: 12px;
+  }
+
+  .modal {
+    padding: 20px 16px calc(20px + var(--safe-bottom));
+    border-radius: 18px 18px 0 0;
+  }
+
+  .modal-handle {
+    margin: 0 auto 16px;
+  }
+
+  .modal h3 {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .input-group {
+    margin-bottom: 12px;
+  }
+
+  .input-group label {
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+
+  .input-group input {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .input-hint {
+    font-size: 10px;
+    margin-top: 3px;
+  }
+
+  .modal-actions {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .modal-actions button {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .calendar-popup-inner {
+    padding: 16px 12px 12px;
+  }
+
+  .calendar-header {
+    margin-bottom: 12px;
+  }
+
+  .calendar-header button {
+    width: 30px; height: 30px;
+    font-size: 12px;
+  }
+
+  .calendar-month {
+    font-size: 16px;
+  }
+
+  .calendar-weekdays {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .calendar-grid {
+    gap: 2px;
+  }
+
+  .calendar-day {
+    height: 38px;
+    font-size: 12px;
+    padding: 2px 1px;
+    border-radius: 9px;
+  }
+
+  .calendar-day .day-num {
+    font-size: 11px;
+  }
+
+  .calendar-day .day-stats {
+    font-size: 7px;
+  }
+
+  .calendar-footer {
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 16px));
+  }
+
+  .calendar-summary {
+    font-size: 11px;
+  }
+
+  .calendar-close {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .data-management-area {
+    margin-top: 12px;
+    padding: 12px;
+  }
+
+  .data-management-area button {
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .batch-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+
+  .ocr-tab {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+
+  .ocr-upload-area {
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+
+  .ocr-upload-area .icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .ocr-upload-area p {
+    font-size: 12px;
+  }
+
+  .ocr-upload-area .sub {
+    font-size: 10px;
+    margin-top: 3px;
+  }
+
+  .ocr-actions-row {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .ocr-actions-row button {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .ocr-preview-img {
+    margin-bottom: 10px;
+  }
+
+  .ocr-start-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .ocr-progress {
+    padding: 12px 0;
+  }
+
+  .ocr-progress .spinner {
+    width: 30px; height: 30px;
+    margin: 0 auto 10px;
+  }
+
+  .ocr-progress .status {
+    font-size: 12px;
+  }
+
+  .ocr-progress .percent {
+    font-size: 20px;
+    margin-top: 3px;
+  }
+
+  .ocr-results h4 {
+    font-size: 12px;
+    margin-bottom: 8px;
+    gap: 4px;
+  }
+
+  .ocr-result-item {
+    padding: 8px 10px;
+    margin-bottom: 4px;
+    gap: 8px;
+  }
+
+  .ocr-result-item .idx {
+    width: 22px; height: 22px;
+    font-size: 11px;
+  }
+
+  .ocr-result-item input {
+    padding: 6px 8px;
+    font-size: 14px;
+    width: 70px;
+  }
+
+  .ocr-result-item .price-preview {
+    font-size: 13px;
+    min-width: 45px;
+  }
+
+  .ocr-result-item .remove-btn {
+    width: 24px; height: 24px;
+    font-size: 12px;
+  }
+
+  .ocr-no-result {
+    padding: 16px;
+    font-size: 12px;
+  }
+
+  .ocr-no-result p {
+    font-size: 10px;
+    margin-top: 3px;
+  }
+
+  .toast {
+    top: calc(60px + env(safe-area-inset-top, 20px));
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
 @media (min-width: 500px) {
   body {
     display: flex; justify-content: center;
@@ -970,6 +1377,7 @@ body {
 <!-- Calendar Modal -->
 <div class="calendar-overlay" id="calendarOverlay">
   <div class="calendar-popup">
+    <div class="calendar-drag-handle"></div>
     <div class="calendar-popup-inner">
       <div class="calendar-header">
         <button onclick="changeCalendarMonth(-1)">◀</button>
