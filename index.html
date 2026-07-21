@@ -851,6 +851,11 @@ body {
           <input type="text" id="binIdInput" placeholder="首次留空，换设备时填入" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
         </div>
         <button onclick="saveCloudConfig()" style="width:100%;padding:8px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">💾 保存并连接</button>
+        <div id="shareLinkPanel" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none;">
+          <label style="display:block;margin-bottom:4px;color:var(--text2);">🔗 分享链接（含密钥）</label>
+          <input type="text" id="shareLinkInput" readonly style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;" onclick="this.select()">
+          <button onclick="copyShareLink()" style="width:100%;margin-top:6px;padding:6px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📋 复制链接</button>
+        </div>
         <div style="margin-top:6px;color:#555;line-height:1.5;">
           注册地址：jsonbin.io<br>API Keys 页面获取密钥
         </div>
@@ -990,9 +995,29 @@ const JB_API_KEY_STORE = '_jb_api_key';
 const JB_BIN_ID_STORE = '_jb_bin_id';
 const JB_BASE = 'https://api.jsonbin.io/v3/b';
 
-function getApiKey() { return localStorage.getItem(JB_API_KEY_STORE) || ''; }
+function getApiKey() {
+  const stored = localStorage.getItem(JB_API_KEY_STORE);
+  if (stored) return stored;
+  const urlParams = new URLSearchParams(window.location.search);
+  const key = urlParams.get('k');
+  if (key) {
+    localStorage.setItem(JB_API_KEY_STORE, key);
+    return key;
+  }
+  return '';
+}
 function setApiKey(k) { localStorage.setItem(JB_API_KEY_STORE, k); }
-function getBinId() { return localStorage.getItem(JB_BIN_ID_STORE) || ''; }
+function getBinId() {
+  const stored = localStorage.getItem(JB_BIN_ID_STORE);
+  if (stored) return stored;
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('b');
+  if (id) {
+    localStorage.setItem(JB_BIN_ID_STORE, id);
+    return id;
+  }
+  return '';
+}
 function setBinId(id) { localStorage.setItem(JB_BIN_ID_STORE, id); }
 
 function toggleCloudSettings() {
@@ -1032,8 +1057,33 @@ async function saveCloudConfig() {
   if (ok) {
     showToast('云端配置成功，已同步 ✓');
     document.getElementById('dataStats').textContent = 'Bin ID: ' + getBinId();
+    showShareLink();
   }
 }
+
+function showShareLink() {
+  const apiKey = getApiKey();
+  const binId = getBinId();
+  if (!apiKey || !binId) return;
+  const panel = document.getElementById('shareLinkPanel');
+  const input = document.getElementById('shareLinkInput');
+  const baseUrl = window.location.origin + window.location.pathname;
+  input.value = `${baseUrl}?k=${encodeURIComponent(apiKey)}&b=${binId}`;
+  panel.style.display = 'block';
+}
+
+async function copyShareLink() {
+  const input = document.getElementById('shareLinkInput');
+  try {
+    await navigator.clipboard.writeText(input.value);
+    showToast('链接已复制到剪贴板 ✓');
+  } catch (e) {
+    input.select();
+    document.execCommand('copy');
+    showToast('链接已复制 ✓');
+  }
+}
+
 const BASE_FEE = 5;
 const FREE_KM = 3;
 const SUBSIDY_RATE = 0.5;
