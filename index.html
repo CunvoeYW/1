@@ -1,0 +1,2520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>秒送骑士 · 工资统计</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #242424;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --text2: #999;
+  --accent: #ff6b35;
+  --accent2: #ff8c42;
+  --green: #4ade80;
+  --gold: #fbbf24;
+  --red: #e05a5a;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Header ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, var(--bg) 60%, transparent);
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.header-left { display: flex; align-items: center; gap: 10px; }
+.logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), #e02d2d);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.header-sub { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+.date-nav {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2);
+  border-radius: 20px;
+  padding: 4px;
+}
+.date-nav button {
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  color: var(--text);
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.date-nav button:active { background: var(--border); }
+.date-nav .date-display {
+  font-size: 13px; font-weight: 600;
+  padding: 0 4px; min-width: 70px; text-align: center;
+  white-space: nowrap;
+}
+
+/* ── Summary Card ── */
+.summary {
+  margin: 0 16px;
+  background: linear-gradient(135deg, #1e1b1a 0%, #1a1a1e 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.summary::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.summary-row {
+  display: flex; gap: 12px;
+  position: relative; z-index: 1;
+}
+.summary-item {
+  flex: 1;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 14px 12px;
+  text-align: center;
+}
+.summary-item .label {
+  font-size: 11px; color: var(--text2);
+  margin-bottom: 6px; letter-spacing: 0.5px;
+}
+.summary-item .value {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent2), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.summary-item .value.small { font-size: 22px; }
+.summary-item .unit { font-size: 13px; font-weight: 500; color: var(--accent2); margin-left: 2px; }
+
+/* ── Quick Add Bar ── */
+.quick-bar {
+  margin: 12px 16px;
+  display: flex; gap: 8px;
+}
+.quick-btn {
+  flex: 1;
+  padding: 14px 8px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px;
+  transition: all .2s;
+  font-family: inherit;
+}
+.quick-btn:active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255,107,53,0.05);
+}
+.quick-btn.primary-btn {
+  border-style: solid;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255,107,53,0.08);
+}
+.quick-btn .icon { font-size: 18px; }
+
+/* ── Order List ── */
+.order-section {
+  margin: 0 16px;
+  padding-bottom: 100px;
+}
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.section-header h3 {
+  font-size: 14px; font-weight: 600;
+  color: var(--text2);
+  display: flex; align-items: center; gap: 6px;
+}
+.section-header .count-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.section-header .clear-btn {
+  font-size: 12px; color: var(--red);
+  background: none; border: none;
+  cursor: pointer; font-family: inherit;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.section-header .clear-btn:active { background: rgba(224,90,90,0.1); }
+
+.order-list { display: flex; flex-direction: column; gap: 6px; }
+
+.order-swipe-wrap {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.order-swipe-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: var(--radius-sm);
+}
+.order-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex; align-items: center;
+  gap: 12px;
+  transition: transform .25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  z-index: 1;
+  touch-action: pan-y;
+  animation: slideIn .3s ease;
+}
+.order-card.swiped { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.order-card.removing {
+  transform: translateX(-120%);
+  opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.order-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.order-info { flex: 1; min-width: 0; }
+.order-info .distance {
+  font-size: 15px; font-weight: 600;
+}
+.order-info .detail {
+  font-size: 11px; color: var(--text2);
+  margin-top: 2px;
+}
+.order-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+.order-price .total {
+  font-size: 18px; font-weight: 700;
+  color: var(--accent2);
+}
+.order-price .breakdown {
+  font-size: 10px; color: var(--text2);
+}
+
+/* ── Empty State ── */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text2);
+}
+.empty .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty p { font-size: 13px; line-height: 1.6; }
+
+/* ── Calendar ── */
+.calendar-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 250;
+  display: flex; align-items: center;
+  justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.calendar-overlay.active {
+  opacity: 1; pointer-events: auto;
+}
+.calendar-popup {
+  background: var(--surface);
+  border-radius: 20px;
+  width: 92%;
+  max-width: 380px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  transform: scale(0.9);
+  transition: transform .25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.calendar-overlay.active .calendar-popup { transform: scale(1); }
+.calendar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.calendar-header button {
+  width: 32px; height: 32px;
+  border: none; background: var(--surface2);
+  color: var(--text);
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.calendar-header button:active { background: var(--border); }
+.calendar-month { font-size: 16px; font-weight: 700; }
+.calendar-weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 11px; color: var(--text2);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.calendar-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  padding: 2px;
+}
+.calendar-day:hover { background: var(--surface2); }
+.calendar-day:active { background: var(--border); transform: scale(0.95); }
+.calendar-day.other-month { color: #444; }
+.calendar-day.today {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
+.calendar-day.selected {
+  background: var(--accent);
+  color: #fff;
+}
+.calendar-day .day-num { font-size: 14px; line-height: 1; }
+.calendar-day .day-stats {
+  font-size: 9px; line-height: 1.2;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.calendar-day.selected .day-stats { color: rgba(255,255,255,0.8); }
+.calendar-day.today .day-stats { color: var(--accent); opacity: 0.8; }
+.calendar-close {
+  display: block; width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.calendar-close:active { background: var(--surface2); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  display: flex; align-items: flex-end;
+  justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-overlay.active {
+  opacity: 1; pointer-events: auto;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 500px;
+  padding: 24px 20px calc(24px + var(--safe-bottom));
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.modal-overlay.active .modal { transform: translateY(0); }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+
+.input-group { margin-bottom: 14px; }
+.input-group label {
+  display: block; font-size: 12px; color: var(--text2);
+  margin-bottom: 6px; font-weight: 500;
+}
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s;
+}
+.input-group input:focus { border-color: var(--accent); }
+.input-group input::placeholder { color: #444; }
+
+.input-hint {
+  font-size: 11px; color: var(--text2);
+  margin-top: 4px;
+}
+
+.modal-actions {
+  display: flex; gap: 10px; margin-top: 20px;
+}
+.modal-actions button {
+  flex: 1; padding: 14px;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  transition: all .15s;
+}
+.btn-cancel {
+  background: var(--surface2);
+  color: var(--text2);
+}
+.btn-cancel:active { background: var(--border); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #e02d2d);
+  color: #fff;
+}
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.btn-primary:disabled {
+  opacity: 0.4; pointer-events: none;
+}
+
+/* ── Batch input ── */
+.batch-preview {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px; min-height: 24px;
+}
+.batch-tag {
+  font-size: 12px; padding: 4px 10px;
+  background: var(--surface2);
+  border-radius: 14px;
+  color: var(--accent2);
+  border: 1px solid var(--border);
+}
+
+/* ── OCR Modal ── */
+.ocr-tabs {
+  display: flex; gap: 4px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 16px;
+}
+.ocr-tab {
+  flex: 1;
+  padding: 10px 6px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all .2s;
+}
+.ocr-tab.active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.ocr-tab-content { display: none; }
+.ocr-tab-content.active { display: block; }
+
+.ocr-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: 12px;
+}
+.ocr-upload-area:active {
+  border-color: var(--accent);
+  background: rgba(255,107,53,0.05);
+}
+.ocr-upload-area .icon { font-size: 36px; margin-bottom: 6px; }
+.ocr-upload-area p { font-size: 13px; color: var(--text2); }
+.ocr-upload-area .sub { font-size: 11px; color: #555; margin-top: 4px; }
+
+.ocr-actions-row {
+  display: flex; gap: 8px; margin-bottom: 12px;
+}
+.ocr-actions-row button {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.ocr-actions-row button:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ocr-preview-img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  display: none;
+  border: 1px solid var(--border);
+}
+
+.ocr-video-preview {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  display: none;
+  border: 1px solid var(--border);
+  max-height: 200px;
+  background: #000;
+}
+
+.ocr-start-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent), #e02d2d);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 4px;
+  display: none;
+}
+.ocr-start-btn:active { opacity: 0.85; }
+.ocr-start-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+.ocr-progress {
+  display: none;
+  text-align: center;
+  padding: 16px 0;
+}
+.ocr-progress .spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ocr-progress .status { font-size: 13px; color: var(--text2); }
+.ocr-progress .percent { font-size: 24px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+
+.ocr-results {
+  display: none;
+  margin-bottom: 16px;
+}
+.ocr-results h4 {
+  font-size: 13px; color: var(--text2);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ocr-result-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+}
+.ocr-result-item .idx {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.ocr-result-item input {
+  flex: 1;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  text-align: center;
+  width: 80px;
+}
+.ocr-result-item input:focus { border-color: var(--accent); }
+.ocr-result-item .price-preview {
+  font-size: 14px; font-weight: 600;
+  color: var(--accent2);
+  min-width: 50px;
+  text-align: right;
+}
+.ocr-result-item .remove-btn {
+  width: 28px; height: 28px;
+  border: none; background: transparent;
+  color: var(--text2);
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ocr-result-item .remove-btn:active { color: var(--red); }
+
+.ocr-no-result {
+  text-align: center;
+  padding: 20px;
+  color: var(--text2);
+  font-size: 13px;
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed; top: 80px; left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: var(--surface2);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Responsive ── */
+@media (min-width: 500px) {
+  body {
+    display: flex; justify-content: center;
+  }
+  .app {
+    width: 100%; max-width: 440px;
+    min-height: 100dvh;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">🛵</div>
+      <div>
+        <h1>秒送骑士</h1>
+        <div class="header-sub">工资统计 · 每单5元 + 超3km补贴¥0.5/km · 日扣保险¥3</div>
+      </div>
+    </div>
+    <div class="date-nav">
+      <button onclick="changeDate(-1)" title="前一天">◀</button>
+      <span class="date-display" id="dateDisplay" onclick="openCalendar()" style="cursor:pointer;">今天</span>
+      <button onclick="changeDate(1)" title="后一天">▶</button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-row">
+      <div class="summary-item">
+        <div class="label">今日单量</div>
+        <div class="value" id="totalOrders">0<span class="unit">单</span></div>
+      </div>
+      <div class="summary-item">
+        <div class="label">今日毛工资</div>
+        <div class="value" id="totalWage">0<span class="unit">元</span></div>
+      </div>
+      <div class="summary-item">
+        <div class="label">补贴合计</div>
+        <div class="value small" id="totalSubsidy">0<span class="unit">元</span></div>
+      </div>
+    </div>
+    <div class="summary-row" style="margin-top:10px;">
+      <div class="summary-item" style="background:rgba(224,90,90,0.08);border:1px solid rgba(224,90,90,0.2);">
+        <div class="label">保险扣费</div>
+        <div class="value small" id="insuranceFee" style="background:linear-gradient(135deg, #e05a5a, #ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">-0<span class="unit">元</span></div>
+      </div>
+      <div class="summary-item" style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);">
+        <div class="label">今日净收入</div>
+        <div class="value" id="netWage" style="background:linear-gradient(135deg, var(--green), #22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">元</span></div>
+      </div>
+    </div>
+    <div class="summary-row" style="margin-top:10px;">
+      <div class="summary-item" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);">
+        <div class="label">本月累计单量</div>
+        <div class="value" id="monthOrders" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">单</span></div>
+      </div>
+      <div class="summary-item" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);">
+        <div class="label">本月累计净收入</div>
+        <div class="value" id="monthWage" style="background:linear-gradient(135deg, var(--gold), var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0<span class="unit">元</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Add -->
+  <div class="quick-bar">
+    <button class="quick-btn primary-btn" onclick="openOcrModal()">
+      <span class="icon">📸</span> 智能识别
+    </button>
+    <button class="quick-btn" onclick="openAddModal('single')">
+      <span class="icon">➕</span> 手动录入
+    </button>
+    <button class="quick-btn" onclick="openAddModal('batch')">
+      <span class="icon">📋</span> 批量
+    </button>
+  </div>
+
+  <!-- Order List -->
+  <div class="order-section">
+    <div class="section-header">
+      <h3>📦 订单明细 <span class="count-badge" id="orderCount">0</span></h3>
+      <div style="display:flex;gap:6px;">
+        <button class="clear-btn" onclick="moveOrders()" id="moveBtn" style="display:none;color:var(--accent2);">移至...</button>
+        <button class="clear-btn" onclick="clearToday()" id="clearBtn" style="display:none">清空今日</button>
+      </div>
+    </div>
+    <div class="order-list" id="orderList">
+      <div class="empty">
+        <div class="icon">📭</div>
+        <p>今天还没有录入订单<br>点击上方按钮开始记录</p>
+      </div>
+    </div>
+
+    <!-- 数据管理与备份 -->
+    <div style="margin-top:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:12px;color:var(--text2);font-weight:600;">💾 数据管理</span>
+        <span style="font-size:11px;" id="storageStatus">⟳ 同步中...</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button onclick="forceSync()" style="flex:1;padding:10px;border:1px solid #4fc3f7;border-radius:8px;background:rgba(79,195,247,0.1);color:#4fc3f7;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">☁️ 同步到云端</button>
+        <button onclick="copyData()" style="flex:1;padding:10px;border:1px solid var(--accent);border-radius:8px;background:rgba(255,107,53,0.1);color:var(--accent);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">📋 复制数据</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button onclick="pasteData()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">📌 粘贴数据</button>
+        <button onclick="pullAndMerge()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;">🔽 从云端恢复</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="exportData()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📤 导出文件</button>
+        <button onclick="document.getElementById('importFileInput').click()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">📥 导入文件</button>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(this)">
+      <button onclick="toggleCloudSettings()" style="width:100%;margin-top:6px;padding:6px;border:1px dashed #555;border-radius:6px;background:transparent;color:#666;font-size:10px;cursor:pointer;font-family:inherit;">⚙️ 云端设置（首次使用需配置）</button>
+      <div id="cloudSettingsPanel" style="display:none;margin-top:8px;padding:10px;background:var(--surface2);border-radius:6px;font-size:11px;">
+        <div style="margin-bottom:8px;">
+          <label style="display:block;margin-bottom:4px;color:var(--text2);">JSONBin API Key</label>
+          <input type="text" id="apiKeyInput" placeholder="粘贴你的 API Key" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="display:block;margin-bottom:4px;color:var(--text2);">Bin ID（留空自动创建）</label>
+          <input type="text" id="binIdInput" placeholder="首次留空，换设备时填入" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;box-sizing:border-box;">
+        </div>
+        <button onclick="saveCloudConfig()" style="width:100%;padding:8px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">💾 保存并连接</button>
+        <div style="margin-top:6px;color:#555;line-height:1.5;">
+          注册地址：jsonbin.io<br>API Keys 页面获取密钥
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#555;text-align:center;" id="dataStats"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="modalTitle">添加订单</h3>
+    <div id="singleInput">
+      <div class="input-group">
+        <label>配送距离（公里）</label>
+        <input type="number" id="distanceInput" placeholder="例如：3.5" step="0.1" min="0" inputmode="decimal">
+        <div class="input-hint" id="pricePreview"></div>
+      </div>
+    </div>
+    <div id="batchInput" style="display:none">
+      <div class="input-group">
+        <label>批量输入距离（用空格、逗号或换行分隔）</label>
+        <input type="text" id="batchInputField" placeholder="例如：3.5 2.0 5.2 1.8">
+        <div class="input-hint" id="batchPreviewHint"></div>
+      </div>
+      <div class="batch-preview" id="batchPreview"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-primary" id="confirmBtn" onclick="confirmAdd()">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- OCR Modal -->
+<div class="modal-overlay" id="ocrModalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>📸 智能识别距离</h3>
+
+    <!-- Tabs -->
+    <div class="ocr-tabs">
+      <button class="ocr-tab active" data-tab="photo" onclick="switchOcrTab('photo')">📷 拍照</button>
+      <button class="ocr-tab" data-tab="gallery" onclick="switchOcrTab('gallery')">🖼️ 相册</button>
+      <button class="ocr-tab" data-tab="video" onclick="switchOcrTab('video')">🎬 录屏</button>
+    </div>
+
+    <!-- Tab: 拍照 -->
+    <div class="ocr-tab-content active" id="tab-photo">
+      <div class="ocr-upload-area" onclick="triggerCamera()">
+        <div class="icon">📷</div>
+        <p>点击拍照</p>
+        <div class="sub">直接拍摄京东秒送APP订单页面</div>
+      </div>
+    </div>
+
+    <!-- Tab: 相册 -->
+    <div class="ocr-tab-content" id="tab-gallery">
+      <div class="ocr-upload-area" onclick="document.getElementById('ocrFileInput').click()">
+        <div class="icon">🖼️</div>
+        <p>点击选择截图（可多选）</p>
+        <div class="sub">从相册选择京东秒送APP订单截图，支持一次选多张</div>
+      </div>
+    </div>
+
+    <!-- Tab: 录屏 -->
+    <div class="ocr-tab-content" id="tab-video">
+      <div class="ocr-upload-area" id="videoUploadArea" onclick="document.getElementById('ocrVideoInput').click()">
+        <div class="icon">🎬</div>
+        <p>点击选择录屏视频</p>
+        <div class="sub">录下京东秒送APP订单列表页面，自动逐帧识别</div>
+      </div>
+      <video id="ocrVideoPreview" class="ocr-video-preview" controls muted playsinline></video>
+      <button class="ocr-start-btn" id="videoStartBtn" onclick="startVideoOCR()">� 开始识别</button>
+    </div>
+
+    <input type="file" id="ocrFileInput" accept="image/*" multiple style="display:none" onchange="handleOcrFile(this)">
+    <input type="file" id="ocrVideoInput" accept="video/*" style="display:none" onchange="handleOcrVideo(this)">
+
+    <!-- 图片预览 -->
+    <img id="ocrPreviewImg" class="ocr-preview-img" alt="预览">
+
+    <!-- 识别进度 -->
+    <div class="ocr-progress" id="ocrProgress">
+      <div class="spinner"></div>
+      <div class="status" id="ocrStatus">正在识别...</div>
+      <div class="percent" id="ocrPercent"></div>
+    </div>
+
+    <!-- 识别结果 -->
+    <div class="ocr-results" id="ocrResults">
+      <h4>🔍 识别到以下距离（可修改）：</h4>
+      <div id="ocrResultList"></div>
+    </div>
+    <div class="ocr-no-result" id="ocrNoResult" style="display:none">
+      <p>😔 未能识别到距离数据</p>
+      <p style="font-size:11px;color:#555;margin-top:4px;">请确保截图包含距离数字（如 3.5km、5.2公里）</p>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeOcrModal()">取消</button>
+      <button class="btn-primary" id="ocrConfirmBtn" onclick="confirmOcrAdd()" disabled>确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Calendar Modal -->
+<div class="calendar-overlay" id="calendarOverlay">
+  <div class="calendar-popup">
+    <div class="calendar-header">
+      <button onclick="changeCalendarMonth(-1)">◀</button>
+      <span class="calendar-month" id="calendarMonth"></span>
+      <button onclick="changeCalendarMonth(1)">▶</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <button class="calendar-close" onclick="closeCalendar()">关闭</button>
+  </div>
+</div>
+
+<script>
+// ── 数据管理 ──
+const STORAGE_KEY = 'rider_salary_data';
+const JB_API_KEY_STORE = '_jb_api_key';
+const JB_BIN_ID_STORE = '_jb_bin_id';
+const JB_BASE = 'https://api.jsonbin.io/v3/b';
+
+function getApiKey() { return localStorage.getItem(JB_API_KEY_STORE) || ''; }
+function setApiKey(k) { localStorage.setItem(JB_API_KEY_STORE, k); }
+function getBinId() { return localStorage.getItem(JB_BIN_ID_STORE) || ''; }
+function setBinId(id) { localStorage.setItem(JB_BIN_ID_STORE, id); }
+
+function toggleCloudSettings() {
+  const panel = document.getElementById('cloudSettingsPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'block') {
+    document.getElementById('apiKeyInput').value = getApiKey();
+    document.getElementById('binIdInput').value = getBinId();
+  }
+}
+
+async function saveCloudConfig() {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  const binId = document.getElementById('binIdInput').value.trim();
+  if (!apiKey) { showToast('请填入 API Key'); return; }
+  setApiKey(apiKey);
+  if (binId) setBinId(binId);
+
+  setCloudStatus('syncing');
+  document.getElementById('dataStats').textContent = '正在连接...';
+
+  // 如果没有 bin ID，创建一个
+  if (!getBinId()) {
+    const newId = await createBin();
+    if (!newId) {
+      showToast('API Key 无效或网络错误');
+      setCloudStatus('error');
+      return;
+    }
+    setBinId(newId);
+  }
+
+  // 立即同步本地数据
+  _syncing = false;
+  const data = loadData();
+  const ok = await pushToCloud(data);
+  if (ok) {
+    showToast('云端配置成功，已同步 ✓');
+    document.getElementById('dataStats').textContent = 'Bin ID: ' + getBinId();
+  }
+}
+const BASE_FEE = 5;
+const FREE_KM = 3;
+const SUBSIDY_RATE = 0.5;
+const INSURANCE_FEE = 3;
+const BASE_GUARANTEE = 120; // 每日保底毛工资
+
+// 计算保底后毛工资（有订单时，毛工资不足120按120算）
+function applyGuarantee(gross, hasOrders) {
+  if (!hasOrders) return 0;
+  return Math.max(gross, BASE_GUARANTEE);
+}
+
+let currentDate = getToday();
+let editingOrderId = null;
+let ocrDistances = [];
+let _syncing = false;
+
+function getToday() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  // 自动同步到云端（防抖3秒）
+  scheduleCloudSync(data);
+}
+
+// ── 云端同步（简化版：单仓，自动续期）──
+let _syncTimer = null;
+
+function scheduleCloudSync(data) {
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => pushToCloud(data), 3000);
+}
+
+function setCloudStatus(state) {
+  const el = document.getElementById('storageStatus');
+  if (!el) return;
+  const map = {
+    syncing: '<span style="color:#fbbf24;">⟳ 同步中...</span>',
+    synced: '<span style="color:#4fc3f7;">☁️ 云端已同步</span>',
+    error: '<span style="color:#e05a5a;">⚠ 同步失败</span>',
+    local: '<span style="color:var(--green);">● 本地已存储</span>'
+  };
+  el.innerHTML = map[state] || map.local;
+}
+
+// 精简数据：云端只存 distance + time，减少体积
+function compactData(data) {
+  const compact = {};
+  for (const [date, orders] of Object.entries(data)) {
+    compact[date] = orders.map(o => ({ d: o.distance, t: o.time || '' }));
+  }
+  return compact;
+}
+
+// 还原数据：从精简格式重建完整订单
+function expandData(compact) {
+  const expanded = {};
+  for (const [date, orders] of Object.entries(compact)) {
+    expanded[date] = orders.map((o, i) => {
+      const dist = parseFloat(o.d) || 0;
+      const c = calcOrder(dist);
+      return {
+        id: date + '_' + i,
+        distance: dist,
+        time: o.t || '',
+        base: c.base,
+        subsidy: c.subsidy,
+        total: c.total
+      };
+    });
+  }
+  return expanded;
+}
+
+// 创建新的 JSONBin bin
+async function createBin() {
+  try {
+    const resp = await fetch(JB_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': getApiKey(),
+        'X-Bin-Name': 'rider-salary'
+      },
+      body: JSON.stringify({ data: {} })
+    });
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    return json.metadata ? json.metadata.id : null;
+  } catch (e) {
+    console.error('createBin error:', e);
+    return null;
+  }
+}
+
+// 推送数据到云端
+async function pushToCloud(data) {
+  if (_syncing) return false;
+  _syncing = true;
+  setCloudStatus('syncing');
+
+  const apiKey = getApiKey();
+  const binId = getBinId();
+  if (!apiKey || !binId) {
+    setCloudStatus('error');
+    document.getElementById('dataStats').textContent = '请先配置云端（点击⚙️）';
+    _syncing = false;
+    return false;
+  }
+
+  const compact = compactData(data);
+  const body = JSON.stringify({ data: compact });
+
+  try {
+    const resp = await fetch(JB_BASE + '/' + binId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': apiKey
+      },
+      body: body
+    });
+
+    if (resp.ok) {
+      setCloudStatus('synced');
+      localStorage.setItem('_cloud_last_sync', Date.now());
+      _syncing = false;
+      return true;
+    } else {
+      let detail = '';
+      try { detail = await resp.text(); } catch (ex) {}
+      setCloudStatus('error');
+      document.getElementById('dataStats').textContent = '同步失败: HTTP ' + resp.status + ' ' + detail.substring(0, 60);
+      _syncing = false;
+      return false;
+    }
+  } catch (e) {
+    setCloudStatus('error');
+    document.getElementById('dataStats').textContent = '同步失败: ' + (e.message || String(e)).substring(0, 60);
+    _syncing = false;
+    return false;
+  }
+}
+
+// 从云端拉取数据
+async function pullFromCloud() {
+  try {
+    const apiKey = getApiKey();
+    const binId = getBinId();
+    if (!apiKey || !binId) return null;
+
+    const resp = await fetch(JB_BASE + '/' + binId + '/latest', {
+      headers: { 'X-Master-Key': apiKey }
+    });
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    const record = json.record || json;
+    if (!record || !record.data) return {};
+    const data = record.data;
+    const firstDate = Object.keys(data)[0];
+    if (firstDate && data[firstDate].length > 0 && data[firstDate][0].d !== undefined) {
+      return expandData(data);
+    }
+    return data;
+  } catch (e) {
+    console.error('pullFromCloud error:', e);
+    return null;
+  }
+}
+
+// 初始化云端同步
+async function initCloudSync() {
+  const apiKey = getApiKey();
+  const binId = getBinId();
+
+  // 未配置 API Key，只显示本地状态
+  if (!apiKey || !binId) {
+    setCloudStatus('local');
+    document.getElementById('dataStats').textContent = '点击⚙️配置云端同步';
+    return;
+  }
+
+  setCloudStatus('syncing');
+  const localData = loadData();
+  const cloudData = await pullFromCloud();
+
+  if (cloudData === null) {
+    if (Object.keys(localData).length > 0) {
+      setCloudStatus('local');
+    } else {
+      setCloudStatus('error');
+    }
+    return;
+  }
+
+  const localKeys = Object.keys(localData);
+  const cloudKeys = Object.keys(cloudData);
+
+  if (cloudKeys.length === 0 && localKeys.length > 0) {
+    await pushToCloud(localData);
+  } else if (cloudKeys.length > 0 && localKeys.length === 0) {
+    saveDataSilent(cloudData);
+    setCloudStatus('synced');
+  } else if (cloudKeys.length > 0 && localKeys.length > 0) {
+    const merged = { ...localData };
+    for (const date of Object.keys(cloudData)) {
+      if (merged[date]) {
+        const existingKeys = new Set(merged[date].map(o => `${o.distance}_${o.time}`));
+        const newOrders = cloudData[date].filter(o => !existingKeys.has(`${o.distance}_${o.time}`));
+        merged[date] = [...merged[date], ...newOrders];
+      } else {
+        merged[date] = cloudData[date];
+      }
+    }
+    saveDataSilent(merged);
+    await pushToCloud(merged);
+    setCloudStatus('synced');
+  } else {
+    setCloudStatus('synced');
+  }
+}
+
+function saveDataSilent(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// 手动强制同步
+async function forceSync() {
+  setCloudStatus('syncing');
+  _syncing = false; // 重置锁
+  const data = loadData();
+  const ok = await pushToCloud(data);
+  if (ok) {
+    showToast(data && Object.keys(data).length > 0 ? '已同步到云端 ✓' : '云端已清空 ✓');
+  } else {
+    const errEl = document.getElementById('dataStats');
+    showToast('同步失败: ' + (errEl ? errEl.textContent.replace('同步失败: ', '') : '未知错误'));
+  }
+}
+
+// 从云端拉取并合并
+async function pullAndMerge() {
+  const apiKey = getApiKey();
+  const binId = getBinId();
+  if (!apiKey || !binId) {
+    showToast('请先点击⚙️配置云端');
+    return;
+  }
+  setCloudStatus('syncing');
+  const cloudData = await pullFromCloud();
+  if (cloudData === null) {
+    showToast('云端连接失败，请检查网络或 API Key');
+    setCloudStatus('error');
+    return;
+  }
+  if (Object.keys(cloudData).length === 0) {
+    showToast('云端暂无数据');
+    setCloudStatus('synced');
+    return;
+  }
+  const localData = loadData();
+  const merged = { ...localData };
+  for (const date of Object.keys(cloudData)) {
+    if (merged[date]) {
+      const existingKeys = new Set(merged[date].map(o => `${o.distance}_${o.time}`));
+      const newOrders = cloudData[date].filter(o => !existingKeys.has(`${o.distance}_${o.time}`));
+      merged[date] = [...merged[date], ...newOrders];
+    } else {
+      merged[date] = cloudData[date];
+    }
+  }
+  saveDataSilent(merged);
+  _syncing = false;
+  await pushToCloud(merged);
+  renderAll();
+  setCloudStatus('synced');
+  showToast(`从云端恢复 ${Object.keys(cloudData).length} 天数据 ✓`);
+}
+
+function getDayOrders(date) {
+  return loadData()[date] || [];
+}
+
+function saveDayOrders(date, orders) {
+  const data = loadData();
+  data[date] = orders;
+  if (orders.length === 0) delete data[date];
+  saveData(data);
+}
+
+function calcOrder(distance) {
+  const d = parseFloat(distance) || 0;
+  const base = BASE_FEE;
+  // 按整公里阶梯计价：3.0-3.9→5.5, 4.0-4.9→6.0, 5.0-5.9→6.5...
+  // 补贴 = max(0, floor(距离) - 2) × 0.5
+  const subsidy = d >= 3 ? Math.max(0, Math.floor(d) - 2) * SUBSIDY_RATE : 0;
+  const total = base + subsidy;
+  return { distance: d, base, subsidy, total };
+}
+
+// ── UI 渲染 ──
+function renderAll() {
+  try {
+    renderDateDisplay();
+    renderSummary();
+    renderOrderList();
+    updateDataStats();
+    // 检测是否为新链接（无历史数据），提示迁移
+    checkDataMigration();
+  } catch (e) {
+    console.error('renderAll error:', e);
+    try { renderOrderList(); } catch (e2) { console.error('renderOrderList fallback error:', e2); }
+    try { updateDataStats(); } catch (e3) { console.error('updateDataStats fallback error:', e3); }
+  }
+}
+
+function checkDataMigration() {
+  const data = loadData();
+  const totalDays = Object.keys(data).length;
+  if (totalDays === 0 && !localStorage.getItem('_migration_hint_shown')) {
+    localStorage.setItem('_migration_hint_shown', '1');
+    const statsEl = document.getElementById('dataStats');
+    if (statsEl) {
+      statsEl.innerHTML = '💡 首次使用？点「🔽 从云端恢复」拉取已备份的数据';
+      statsEl.style.color = '#4fc3f7';
+      statsEl.style.fontSize = '11px';
+      statsEl.style.fontWeight = '600';
+    }
+  }
+}
+
+function renderDateDisplay() {
+  const el = document.getElementById('dateDisplay');
+  const today = getToday();
+  if (currentDate === today) {
+    el.textContent = '今天';
+  } else {
+    const d = new Date(currentDate);
+    el.textContent = `${d.getMonth()+1}月${d.getDate()}日`;
+  }
+}
+
+function renderSummary() {
+  const orders = getDayOrders(currentDate);
+  const count = orders.length;
+  const rawGross = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const totalWage = applyGuarantee(rawGross, count > 0);
+  const totalSubsidy = orders.reduce((s, o) => s + (o.subsidy || 0), 0);
+  const insurance = count > 0 ? INSURANCE_FEE : 0;
+  const netWage = totalWage - insurance;
+  const isGuaranteed = count > 0 && rawGross < BASE_GUARANTEE;
+
+  document.getElementById('totalOrders').innerHTML = `${count}<span class="unit">单</span>`;
+  document.getElementById('totalWage').innerHTML = `${totalWage.toFixed(1)}<span class="unit">元</span>${isGuaranteed ? '<span style="font-size:10px;color:#fbbf24;margin-left:4px;">保底</span>' : ''}`;
+  document.getElementById('totalSubsidy').innerHTML = `${totalSubsidy.toFixed(1)}<span class="unit">元</span>`;
+  document.getElementById('insuranceFee').innerHTML = `-${insurance}<span class="unit">元</span>`;
+  document.getElementById('netWage').innerHTML = `${netWage.toFixed(1)}<span class="unit">元</span>`;
+  document.getElementById('orderCount').textContent = count;
+  document.getElementById('clearBtn').style.display = count > 0 ? 'inline-block' : 'none';
+  document.getElementById('moveBtn').style.display = count > 0 ? 'inline-block' : 'none';
+
+  // 本月统计
+  const monthPrefix = currentDate.substring(0, 7);
+  const allData = loadData();
+  let monthOrders = 0;
+  let monthGross = 0;
+  let monthInsuranceDays = 0;
+  for (const [date, dayOrders] of Object.entries(allData)) {
+    if (date.startsWith(monthPrefix)) {
+      monthOrders += dayOrders.length;
+      const dayRaw = dayOrders.reduce((s, o) => s + (o.total || 0), 0);
+      monthGross += applyGuarantee(dayRaw, dayOrders.length > 0);
+      if (dayOrders.length > 0) monthInsuranceDays++;
+    }
+  }
+  const monthNet = monthGross - monthInsuranceDays * INSURANCE_FEE;
+  document.getElementById('monthOrders').innerHTML = `${monthOrders}<span class="unit">单</span>`;
+  document.getElementById('monthWage').innerHTML = `${monthNet.toFixed(1)}<span class="unit">元</span>`;
+}
+
+function renderOrderList() {
+  const orders = getDayOrders(currentDate);
+  const container = document.getElementById('orderList');
+
+  if (orders.length === 0) {
+    container.innerHTML = `
+      <div class="empty">
+        <div class="icon">📭</div>
+        <p>今天还没有录入订单<br>点击上方按钮开始记录</p>
+      </div>`;
+    return;
+  }
+
+  const totalWage = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const effectiveWage = applyGuarantee(totalWage, true);
+  const insurance = orders.length > 0 ? INSURANCE_FEE : 0;
+  const netWage = effectiveWage - insurance;
+  const isGuaranteed = totalWage < BASE_GUARANTEE;
+
+  container.innerHTML = orders.map((o, i) => {
+    const dist = o.distance || 0;
+    const base = o.base || BASE_FEE;
+    const subsidy = o.subsidy || 0;
+    const total = o.total || (base + subsidy);
+    return `
+    <div class="order-swipe-wrap" data-id="${o.id}">
+      <div class="order-swipe-bg">删除</div>
+      <div class="order-card" id="order-${o.id}">
+        <div class="order-num">${i + 1}</div>
+        <div class="order-info">
+          <div class="distance">${dist} 公里</div>
+          <div class="detail">
+            基础¥${base} ${subsidy > 0 ? `+ 补贴¥${subsidy.toFixed(1)}` : '(无补贴)'}
+          </div>
+        </div>
+        <div class="order-price">
+          <div class="total">¥${total.toFixed(1)}</div>
+          <div class="breakdown">${o.time || ''}</div>
+        </div>
+      </div>
+    </div>
+  `}).join('') + `
+    ${isGuaranteed ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:6px;background:rgba(251,191,36,0.08);border:1px dashed rgba(251,191,36,0.4);border-radius:var(--radius-sm);font-size:13px;">
+      <span style="color:#fbbf24;">🛡️ 保底补足 (原¥${totalWage.toFixed(1)} → ¥${BASE_GUARANTEE}.0)</span>
+      <span style="color:#fbbf24;font-weight:700;">+¥${(BASE_GUARANTEE - totalWage).toFixed(1)}</span>
+    </div>
+    ` : ''}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:6px;background:rgba(224,90,90,0.06);border:1px dashed rgba(224,90,90,0.3);border-radius:var(--radius-sm);font-size:13px;">
+      <span style="color:#e05a5a;">🛡️ 保险扣费</span>
+      <span style="color:#e05a5a;font-weight:700;">-¥${insurance}.00</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:4px;background:rgba(74,222,128,0.06);border:1px dashed rgba(74,222,128,0.3);border-radius:var(--radius-sm);font-size:13px;">
+      <span style="color:var(--green);">💰 今日净收入</span>
+      <span style="color:var(--green);font-weight:700;font-size:15px;">¥${netWage.toFixed(1)}</span>
+    </div>
+  `;
+
+  // 绑定滑动事件
+  bindSwipeEvents();
+}
+
+// ── 滑动删除 ──
+let swipeState = { el: null, startX: 0, startY: 0, offsetX: 0, swiped: false };
+let _swipeDocBound = false;
+
+function bindSwipeEvents() {
+  document.querySelectorAll('.order-card').forEach(card => {
+    card.addEventListener('touchstart', onSwipeStart, { passive: false });
+    card.addEventListener('touchmove', onSwipeMove, { passive: false });
+    card.addEventListener('touchend', onSwipeEnd);
+    
+    // 点击已展开的卡片时收回
+    card.addEventListener('click', function(e) {
+      if (card.classList.contains('swiped')) {
+        e.preventDefault();
+        resetSwipe();
+      }
+    });
+  });
+
+  if (!_swipeDocBound) {
+    _swipeDocBound = true;
+    document.addEventListener('click', function(e) {
+      if (swipeState.swiped && !e.target.closest('.order-card')) {
+        resetSwipe();
+      }
+    });
+  }
+}
+
+function onSwipeStart(e) {
+  // 如果已有其他卡片展开，先收回
+  if (swipeState.swiped && swipeState.el !== this) {
+    resetSwipe();
+  }
+  swipeState.el = this;
+  swipeState.startX = e.touches[0].clientX;
+  swipeState.startY = e.touches[0].clientY;
+  this.style.transition = 'none';
+}
+
+function onSwipeMove(e) {
+  if (!swipeState.el) return;
+  const dx = e.touches[0].clientX - swipeState.startX;
+  const dy = e.touches[0].clientY - swipeState.startY;
+
+  // 水平滑动为主时才处理
+  if (Math.abs(dx) > Math.abs(dy) && dx < 0) {
+    e.preventDefault();
+    const offset = Math.max(dx, -90);
+    swipeState.el.style.transform = `translateX(${offset}px)`;
+    swipeState.offsetX = offset;
+  }
+}
+
+function onSwipeEnd() {
+  if (!swipeState.el) return;
+  swipeState.el.style.transition = 'transform .25s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+  if (swipeState.offsetX < -45) {
+    // 展开删除
+    swipeState.el.style.transform = 'translateX(-80px)';
+    swipeState.el.classList.add('swiped');
+    swipeState.swiped = true;
+  } else {
+    // 收回
+    resetSwipe();
+  }
+}
+
+function resetSwipe() {
+  if (swipeState.el) {
+    swipeState.el.style.transition = 'transform .25s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    swipeState.el.style.transform = 'translateX(0)';
+    swipeState.el.classList.remove('swiped');
+  }
+  swipeState.el = null;
+  swipeState.offsetX = 0;
+  swipeState.swiped = false;
+}
+
+// 点击删除背景触发删除
+document.getElementById('orderList').addEventListener('click', function(e) {
+  const bg = e.target.closest('.order-swipe-bg');
+  if (bg) {
+    const wrap = bg.closest('.order-swipe-wrap');
+    if (wrap) {
+      deleteOrder(wrap.dataset.id);
+    }
+  }
+});
+
+// ── 数据备份与恢复 ──
+// 一键复制：复制数据到剪贴板，换链接后粘贴即可恢复
+async function copyData() {
+  const data = loadData();
+  const json = JSON.stringify(data);
+  try {
+    await navigator.clipboard.writeText(json);
+    showToast('已复制到剪贴板 ✓（去新链接点「粘贴数据」恢复）');
+  } catch (e) {
+    // 降级方案：显示文本框让用户手动复制
+    const ta = document.createElement('textarea');
+    ta.value = json;
+    ta.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:200px;z-index:9999;font-size:12px;padding:10px;border:2px solid var(--accent);border-radius:8px;';
+    document.body.appendChild(ta);
+    ta.select();
+    showToast('请手动全选复制文本框内容');
+    setTimeout(() => ta.remove(), 30000);
+  }
+}
+
+function pasteData() {
+  const text = prompt('请粘贴之前复制的数据（在新链接点「复制数据」后粘贴到此处）：');
+  if (!text) return;
+  try {
+    const data = JSON.parse(text);
+    const dates = Object.keys(data);
+    if (dates.length === 0) { showToast('数据为空'); return; }
+    saveData(data);
+    renderAll();
+    updateDataStats();
+    showToast(`恢复成功 ✓ (${dates.length}天数据)`);
+    // 自动同步到云端
+    _syncing = false;
+    pushToCloud(data);
+  } catch (e) {
+    showToast('数据格式错误，请重新复制');
+  }
+}
+
+function exportData() {
+  const data = loadData();
+  const dates = Object.keys(data);
+  if (dates.length === 0) {
+    showToast('暂无数据可导出');
+    return;
+  }
+
+  const exportObj = {
+    app: '秒送骑士工资统计',
+    exportedAt: new Date().toISOString(),
+    version: '1.0',
+    data: data
+  };
+
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const d = new Date();
+  a.download = `rider-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('备份已下载 ✓');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.data || typeof imported.data !== 'object') {
+        showToast('备份文件格式无效');
+        return;
+      }
+
+      const currentData = loadData();
+      const currentDates = Object.keys(currentData);
+
+      if (currentDates.length > 0) {
+        if (!confirm(`当前已有 ${currentDates.length} 天的数据。\n\n选择"确定"将合并导入（保留现有数据）\n选择"取消"将放弃导入`)) return;
+      }
+
+      // 合并数据：导入的数据覆盖同日期
+      const merged = { ...currentData, ...imported.data };
+      saveData(merged);
+      renderAll();
+      updateDataStats();
+      showToast(`导入成功 ✓ (${Object.keys(imported.data).length}天数据)`);
+      // 自动同步到云端
+      _syncing = false;
+      pushToCloud(merged);
+    } catch (err) {
+      console.error('导入失败:', err);
+      showToast('导入失败，文件格式错误');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function updateDataStats() {
+  const data = loadData();
+  const dates = Object.keys(data);
+  let totalOrders = 0;
+  let totalWage = 0;
+  dates.forEach(date => {
+    const orders = data[date];
+    totalOrders += orders.length;
+    const dayGross = orders.reduce((s, o) => s + (o.total || 0), 0);
+    totalWage += applyGuarantee(dayGross, orders.length > 0);
+    if (orders.length > 0) totalWage -= INSURANCE_FEE;
+  });
+
+  const statsEl = document.getElementById('dataStats');
+  const statusEl = document.getElementById('storageStatus');
+
+  if (dates.length === 0) {
+    statsEl.textContent = '暂无数据';
+  } else {
+    statsEl.textContent = `共 ${dates.length} 天 · ${totalOrders} 单 · 净收入 ¥${totalWage.toFixed(1)}`;
+    const lastSync = localStorage.getItem('_cloud_last_sync');
+    if (lastSync) {
+      const ago = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
+      const agoStr = ago < 60 ? '刚刚' : ago < 3600 ? `${Math.floor(ago/60)}分钟前` : `${Math.floor(ago/3600)}小时前`;
+      statsEl.textContent += ` · 上次同步${agoStr}`;
+    }
+  }
+}
+
+// ── 数据备份/恢复：通过 JSON 文件导出导入 ──
+// 数据自动保存到浏览器本地存储，刷新/重开不会丢失
+// 需要换设备时：先点「备份数据」下载 → 新设备点「恢复数据」上传
+
+function addOrder(distance, optTime) {
+  const d = parseFloat(distance);
+  if (isNaN(d) || d < 0) return false;
+
+  const orders = getDayOrders(currentDate);
+  const now = new Date();
+  const time = optTime || `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const order = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    distance: d,
+    time,
+    ...calcOrder(d)
+  };
+
+  orders.push(order);
+  saveDayOrders(currentDate, orders);
+  renderAll();
+  return true;
+}
+
+function deleteOrder(id) {
+  let orders = getDayOrders(currentDate);
+  const card = document.getElementById(`order-${id}`);
+  if (card) {
+    resetSwipe();
+    card.classList.add('removing');
+  }
+
+  setTimeout(() => {
+    orders = orders.filter(o => o.id !== id);
+    saveDayOrders(currentDate, orders);
+    renderAll();
+  }, 300);
+}
+
+function clearToday() {
+  if (confirm(`确定要清空 ${currentDate === getToday() ? '今天' : currentDate} 的所有订单记录吗？此操作不可恢复。`)) {
+    saveDayOrders(currentDate, []);
+    renderAll();
+    showToast('已清空');
+  }
+}
+
+function moveOrders() {
+  const orders = getDayOrders(currentDate);
+  if (orders.length === 0) return;
+
+  const targetDate = prompt(
+    `当前日期：${currentDate}（共 ${orders.length} 单）\n请输入目标日期（格式：YYYY-MM-DD）：`,
+    ''
+  );
+
+  if (!targetDate) return;
+
+  // 验证日期格式
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+    showToast('日期格式错误，请使用 YYYY-MM-DD 格式');
+    return;
+  }
+
+  if (targetDate === currentDate) {
+    showToast('目标日期与当前日期相同');
+    return;
+  }
+
+  if (!confirm(`确认将 ${currentDate} 的 ${orders.length} 单订单移至 ${targetDate}？`)) return;
+
+  // 合并到目标日期
+  const targetOrders = getDayOrders(targetDate);
+  const merged = [...targetOrders, ...orders];
+  saveDayOrders(targetDate, merged);
+
+  // 清空当前日期
+  saveDayOrders(currentDate, []);
+
+  renderAll();
+  showToast(`已移至 ${targetDate} ✓`);
+}
+
+function changeDate(delta) {
+  const d = new Date(currentDate);
+  d.setDate(d.getDate() + delta);
+  currentDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  renderAll();
+}
+
+// ── 日历选择器 ──
+let calendarYear, calendarMonth;
+
+function openCalendar() {
+  const d = new Date(currentDate);
+  calendarYear = d.getFullYear();
+  calendarMonth = d.getMonth(); // 0-based
+  document.getElementById('calendarOverlay').classList.add('active');
+  renderCalendar();
+}
+
+function closeCalendar() {
+  document.getElementById('calendarOverlay').classList.remove('active');
+}
+
+function changeCalendarMonth(delta) {
+  calendarMonth += delta;
+  if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+  if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  document.getElementById('calendarMonth').textContent = `${calendarYear}年${calendarMonth + 1}月`;
+
+  const allData = loadData();
+  const today = getToday();
+  const firstDay = new Date(calendarYear, calendarMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const prevMonthDays = new Date(calendarYear, calendarMonth, 0).getDate();
+
+  let html = '';
+
+  // 上月填充
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = prevMonthDays - i;
+    const m = calendarMonth === 0 ? 12 : calendarMonth;
+    const y = calendarMonth === 0 ? calendarYear - 1 : calendarYear;
+    const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    html += renderDayCell(day, dateStr, 'other-month', allData, today);
+  }
+
+  // 本月
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    let cls = '';
+    if (dateStr === currentDate) cls += ' selected';
+    if (dateStr === today) cls += ' today';
+    html += renderDayCell(day, dateStr, cls, allData, today);
+  }
+
+  // 下月填充
+  const remaining = 42 - (firstDay + daysInMonth);
+  for (let day = 1; day <= remaining; day++) {
+    const m = calendarMonth === 11 ? 1 : calendarMonth + 2;
+    const y = calendarMonth === 11 ? calendarYear + 1 : calendarYear;
+    const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    html += renderDayCell(day, dateStr, 'other-month', allData, today);
+  }
+
+  document.getElementById('calendarGrid').innerHTML = html;
+}
+
+function renderDayCell(day, dateStr, cls, allData, today) {
+  const dayOrders = allData[dateStr] || [];
+  const count = dayOrders.length;
+  let stats = '';
+  if (count > 0) {
+    const gross = dayOrders.reduce((s, o) => s + (o.total || 0), 0);
+    const effectiveGross = applyGuarantee(gross, true);
+    const net = effectiveGross - INSURANCE_FEE;
+    stats = `<span class="day-stats">${count}单 ¥${net.toFixed(0)}</span>`;
+  }
+  return `<button class="calendar-day${cls}" onclick="selectCalendarDate('${dateStr}')">
+    <span class="day-num">${day}</span>${stats}
+  </button>`;
+}
+
+function selectCalendarDate(dateStr) {
+  currentDate = dateStr;
+  closeCalendar();
+  renderAll();
+}
+
+// 点击遮罩关闭日历
+document.getElementById('calendarOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeCalendar();
+});
+
+// ── 手动添加模态框 ──
+let modalMode = 'single';
+
+function openAddModal(mode) {
+  modalMode = mode;
+  editingOrderId = null;
+
+  document.getElementById('modalTitle').textContent = mode === 'single' ? '添加订单' : '批量录入';
+  document.getElementById('singleInput').style.display = mode === 'single' ? 'block' : 'none';
+  document.getElementById('batchInput').style.display = mode === 'batch' ? 'block' : 'none';
+  document.getElementById('confirmBtn').textContent = '确认添加';
+
+  document.getElementById('distanceInput').value = '';
+  document.getElementById('batchInputField').value = '';
+  document.getElementById('pricePreview').textContent = '';
+  document.getElementById('batchPreviewHint').textContent = '';
+  document.getElementById('batchPreview').innerHTML = '';
+
+  document.getElementById('modalOverlay').classList.add('active');
+
+  if (mode === 'single') {
+    setTimeout(() => document.getElementById('distanceInput').focus(), 350);
+  } else {
+    setTimeout(() => document.getElementById('batchInputField').focus(), 350);
+  }
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.getElementById('distanceInput').value = '';
+  document.getElementById('batchInputField').value = '';
+}
+
+document.getElementById('distanceInput').addEventListener('input', function() {
+  const d = parseFloat(this.value);
+  if (isNaN(d) || d <= 0) {
+    document.getElementById('pricePreview').textContent = '';
+    return;
+  }
+  const r = calcOrder(d);
+  document.getElementById('pricePreview').textContent =
+    `预估：基础¥${r.base} + 补贴¥${r.subsidy.toFixed(1)} = ¥${r.total.toFixed(1)}`;
+});
+
+document.getElementById('batchInputField').addEventListener('input', function() {
+  const distances = this.value.split(/[\s,，、\n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)));
+  const preview = document.getElementById('batchPreview');
+  const hint = document.getElementById('batchPreviewHint');
+
+  if (distances.length === 0) {
+    preview.innerHTML = '';
+    hint.textContent = '';
+    return;
+  }
+
+  let totalWage = 0;
+  preview.innerHTML = distances.map(d => {
+    const r = calcOrder(parseFloat(d));
+    totalWage += r.total;
+    return `<span class="batch-tag">${d}km → ¥${r.total.toFixed(1)}</span>`;
+  }).join('');
+
+  hint.textContent = `共 ${distances.length} 单，合计 ¥${totalWage.toFixed(1)}`;
+});
+
+function confirmAdd() {
+  if (modalMode === 'single') {
+    const val = document.getElementById('distanceInput').value;
+    if (!addOrder(val)) {
+      document.getElementById('distanceInput').focus();
+      document.getElementById('distanceInput').select();
+      return;
+    }
+    showToast('已添加 ✓');
+    document.getElementById('distanceInput').value = '';
+    document.getElementById('pricePreview').textContent = '';
+    setTimeout(() => document.getElementById('distanceInput').focus(), 100);
+  } else {
+    const raw = document.getElementById('batchInputField').value;
+    const distances = raw.split(/[\s,，、\n]+/).filter(s => s.trim() && !isNaN(parseFloat(s)) && parseFloat(s) >= 0);
+    if (distances.length === 0) {
+      document.getElementById('batchInputField').focus();
+      return;
+    }
+    let count = 0;
+    distances.forEach(d => { if (addOrder(d)) count++; });
+    showToast(`已添加 ${count} 单 ✓`);
+    closeModal();
+  }
+}
+
+// ── OCR 智能识别 ──
+let ocrCurrentTab = 'photo';
+let ocrVideoFile = null;
+
+function openOcrModal() {
+  ocrDistances = [];
+  ocrVideoFile = null;
+  resetOcrUI();
+  switchOcrTab('photo');
+  document.getElementById('ocrModalOverlay').classList.add('active');
+}
+
+function closeOcrModal() {
+  document.getElementById('ocrModalOverlay').classList.remove('active');
+  resetOcrUI();
+  ocrDistances = [];
+  ocrVideoFile = null;
+}
+
+function switchOcrTab(tab) {
+  ocrCurrentTab = tab;
+  // 更新tab样式
+  document.querySelectorAll('.ocr-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.ocr-tab[data-tab="${tab}"]`).classList.add('active');
+  // 更新内容
+  document.querySelectorAll('.ocr-tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  // 重置共用UI
+  document.getElementById('ocrPreviewImg').style.display = 'none';
+  document.getElementById('ocrProgress').style.display = 'none';
+  document.getElementById('ocrResults').style.display = 'none';
+  document.getElementById('ocrNoResult').style.display = 'none';
+  document.getElementById('ocrConfirmBtn').disabled = true;
+  document.getElementById('ocrFileInput').value = '';
+  document.getElementById('ocrVideoInput').value = '';
+  // 视频相关
+  document.getElementById('videoUploadArea').style.display = 'block';
+  document.getElementById('ocrVideoPreview').style.display = 'none';
+  document.getElementById('videoStartBtn').style.display = 'none';
+  ocrVideoFile = null;
+}
+
+function resetOcrUI() {
+  document.getElementById('ocrPreviewImg').style.display = 'none';
+  document.getElementById('ocrProgress').style.display = 'none';
+  document.getElementById('ocrResults').style.display = 'none';
+  document.getElementById('ocrNoResult').style.display = 'none';
+  document.getElementById('ocrConfirmBtn').disabled = true;
+  document.getElementById('ocrFileInput').value = '';
+  document.getElementById('ocrVideoInput').value = '';
+  document.getElementById('videoUploadArea').style.display = 'block';
+  document.getElementById('ocrVideoPreview').style.display = 'none';
+  document.getElementById('videoStartBtn').style.display = 'none';
+  ocrVideoFile = null;
+}
+
+function triggerCamera() {
+  const input = document.getElementById('ocrFileInput');
+  input.setAttribute('capture', 'environment');
+  input.click();
+  setTimeout(() => input.setAttribute('capture', ''), 500);
+}
+
+function handleOcrFile(input) {
+  const files = Array.from(input.files);
+  if (files.length === 0) return;
+
+  document.getElementById('ocrResults').style.display = 'none';
+  document.getElementById('ocrNoResult').style.display = 'none';
+  ocrDistances = [];
+
+  // 多图逐一处理
+  processMultipleImages(files, 0);
+}
+
+async function processMultipleImages(files, index) {
+  if (index >= files.length) {
+    // 全部处理完毕
+    if (ocrDistances.length > 0) {
+      renderOcrResults();
+    } else {
+      document.getElementById('ocrNoResult').style.display = 'block';
+    }
+    return;
+  }
+
+  const progressEl = document.getElementById('ocrProgress');
+  const statusEl = document.getElementById('ocrStatus');
+  const percentEl = document.getElementById('ocrPercent');
+  progressEl.style.display = 'block';
+  statusEl.textContent = `正在处理第 ${index + 1}/${files.length} 张图片...`;
+  percentEl.textContent = '';
+
+  // 显示当前图片预览
+  const reader = new FileReader();
+  const dataUrl = await new Promise(resolve => {
+    reader.onload = e => resolve(e.target.result);
+    reader.readAsDataURL(files[index]);
+  });
+  const img = document.getElementById('ocrPreviewImg');
+  img.src = dataUrl;
+  img.style.display = 'block';
+
+  try {
+    const processed = await preprocessImage(dataUrl);
+    const worker = await Tesseract.createWorker('chi_sim', 1);
+    await worker.setParameters({
+      tessedit_pageseg_mode: '6',
+      tessedit_char_whitelist: '0123456789.km公里KMMm: ',
+    });
+    const ret = await worker.recognize(processed);
+    await worker.terminate();
+
+    const text = ret.data.text;
+    console.log(`图片${index+1} OCR结果:`, text);
+
+    const results = extractDistances(text);
+    // 合并结果，去重（按距离+时间组合去重）
+    for (const r of results) {
+      const exists = ocrDistances.some(d => d.distance === r.distance && d.time === r.time);
+      if (!exists) ocrDistances.push(r);
+    }
+  } catch (err) {
+    console.error(`图片${index+1} OCR失败:`, err);
+  }
+
+  // 短暂延迟后处理下一张
+  await new Promise(r => setTimeout(r, 300));
+  processMultipleImages(files, index + 1);
+}
+
+// ── 录屏处理 ──
+function handleOcrVideo(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  ocrVideoFile = file;
+  const video = document.getElementById('ocrVideoPreview');
+  video.src = URL.createObjectURL(file);
+  video.style.display = 'block';
+  document.getElementById('videoUploadArea').style.display = 'none';
+  document.getElementById('videoStartBtn').style.display = 'block';
+}
+
+async function startVideoOCR() {
+  if (!ocrVideoFile) return;
+
+  const progressEl = document.getElementById('ocrProgress');
+  const statusEl = document.getElementById('ocrStatus');
+  const percentEl = document.getElementById('ocrPercent');
+  const startBtn = document.getElementById('videoStartBtn');
+
+  progressEl.style.display = 'block';
+  startBtn.disabled = true;
+  document.getElementById('ocrResults').style.display = 'none';
+  document.getElementById('ocrNoResult').style.display = 'none';
+
+  try {
+    // 步骤1: 提取视频帧
+    statusEl.textContent = '正在提取视频帧...';
+    percentEl.textContent = '';
+    const frames = await extractVideoFrames(ocrVideoFile, 1.5);
+
+    // 步骤2: 去重（相似帧合并）
+    statusEl.textContent = '正在去重...';
+    const uniqueFrames = deduplicateFrames(frames);
+
+    // 步骤3: 逐帧OCR
+    const allResults = [];
+    for (let i = 0; i < uniqueFrames.length; i++) {
+      statusEl.textContent = `正在识别第 ${i + 1}/${uniqueFrames.length} 帧...`;
+      percentEl.textContent = Math.round((i / uniqueFrames.length) * 100) + '%';
+
+      const text = await ocrImage(uniqueFrames[i]);
+      const dists = extractDistances(text);
+      allResults.push(...dists);
+    }
+
+    // 去重（按距离+时间组合）
+    const seen = new Set();
+    ocrDistances = [];
+    for (const r of allResults) {
+      const key = `${r.distance}_${r.time}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        ocrDistances.push(r);
+      }
+    }
+    ocrDistances.sort((a, b) => a.distance - b.distance);
+
+    progressEl.style.display = 'none';
+    startBtn.style.display = 'none';
+
+    if (ocrDistances.length > 0) {
+      renderOcrResults();
+    } else {
+      document.getElementById('ocrNoResult').style.display = 'block';
+    }
+  } catch (err) {
+    console.error('视频OCR失败:', err);
+    progressEl.style.display = 'none';
+    startBtn.style.display = 'none';
+    document.getElementById('ocrNoResult').style.display = 'block';
+    showToast('识别失败，请重试');
+  }
+}
+
+async function extractVideoFrames(file, intervalSec) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    video.src = URL.createObjectURL(file);
+
+    video.onloadedmetadata = async () => {
+      const duration = video.duration;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = Math.min(video.videoWidth, 640);
+      canvas.height = Math.min(video.videoHeight, 360);
+      // 保持宽高比
+      const scale = Math.min(640 / video.videoWidth, 360 / video.videoHeight);
+      canvas.width = Math.round(video.videoWidth * scale);
+      canvas.height = Math.round(video.videoHeight * scale);
+
+      const frames = [];
+      const timestamps = [];
+
+      for (let t = 0; t < duration; t += intervalSec) {
+        timestamps.push(t);
+      }
+      // 最多取30帧，避免处理太慢
+      const maxFrames = 30;
+      const step = Math.max(1, Math.floor(timestamps.length / maxFrames));
+      const sampledTimestamps = timestamps.filter((_, i) => i % step === 0).slice(0, maxFrames);
+
+      for (const t of sampledTimestamps) {
+        video.currentTime = t;
+        await new Promise(r => { video.onseeked = r; });
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        frames.push(canvas.toDataURL('image/jpeg', 0.6));
+      }
+
+      URL.revokeObjectURL(video.src);
+      resolve(frames);
+    };
+
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src);
+      reject(new Error('视频加载失败'));
+    };
+  });
+}
+
+function deduplicateFrames(frames) {
+  if (frames.length <= 1) return frames;
+
+  const unique = [frames[0]];
+  const hashSize = 16;
+
+  const getHash = (dataUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = c.height = hashSize;
+        const cx = c.getContext('2d');
+        cx.drawImage(img, 0, 0, hashSize, hashSize);
+        const data = cx.getImageData(0, 0, hashSize, hashSize).data;
+        let hash = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          hash += data[i];
+        }
+        resolve(hash);
+      };
+      img.src = dataUrl;
+    });
+  };
+
+  // 简化版：比较相邻帧的亮度差异
+  const getBrightness = (dataUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = c.height = 8;
+        const cx = c.getContext('2d');
+        cx.drawImage(img, 0, 0, 8, 8);
+        const data = cx.getImageData(0, 0, 8, 8).data;
+        let sum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          sum += data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+        }
+        resolve(sum / 64);
+      };
+      img.src = dataUrl;
+    });
+  };
+
+  // 同步处理：对于去重使用简单的采样方法
+  // 我们直接取间隔帧，不用复杂的去重
+  // 实际OCR时如果两帧识别结果相同，自然会被去重
+  return frames;
+}
+
+// ── 图片预处理：增强对比度+二值化，大幅提升OCR准确率 ──
+async function preprocessImage(imageDataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // 放大到至少 1200px 宽，提高OCR识别率
+      const targetWidth = Math.max(img.width, 1200);
+      const scale = targetWidth / img.width;
+      canvas.width = targetWidth;
+      canvas.height = Math.round(img.height * scale);
+
+      // 高质量缩放
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // 先计算平均亮度用于自适应阈值
+      let totalBrightness = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        totalBrightness += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      }
+      const avgBrightness = totalBrightness / (data.length / 4);
+      const threshold = Math.max(100, Math.min(180, avgBrightness * 0.85));
+
+      // 增强对比度 + 自适应二值化
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        // 对比度拉伸
+        const contrast = 1.6;
+        const enhanced = Math.min(255, Math.max(0, (gray - 128) * contrast + 128));
+        // 二值化：文字变黑(0)，背景变白(255)
+        const binary = enhanced > threshold ? 255 : 0;
+        data[i] = data[i + 1] = data[i + 2] = binary;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.src = imageDataUrl;
+  });
+}
+
+async function ocrImage(imageDataUrl) {
+  // 预处理图片
+  const processed = await preprocessImage(imageDataUrl);
+
+  const worker = await Tesseract.createWorker('chi_sim', 1);
+  // 设置PSM为6：假设为统一的文本块，适合APP截图
+  await worker.setParameters({
+    tessedit_pageseg_mode: '6',
+    tessedit_char_whitelist: '0123456789.km公里KMMm: ',
+  });
+  const ret = await worker.recognize(processed);
+  await worker.terminate();
+  return ret.data.text;
+}
+
+async function runOCR(imageDataUrl) {
+  const progressEl = document.getElementById('ocrProgress');
+  const statusEl = document.getElementById('ocrStatus');
+  const percentEl = document.getElementById('ocrPercent');
+
+  progressEl.style.display = 'block';
+  statusEl.textContent = '正在预处理图片...';
+  percentEl.textContent = '';
+
+  try {
+    const processed = await preprocessImage(imageDataUrl);
+
+    statusEl.textContent = '正在加载识别引擎...';
+    percentEl.textContent = '';
+
+    const worker = await Tesseract.createWorker('chi_sim', 1, {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          statusEl.textContent = '正在识别文字...';
+          percentEl.textContent = Math.round(m.progress * 100) + '%';
+        } else if (m.status === 'loading tesseract core') {
+          statusEl.textContent = '加载核心引擎...';
+        } else if (m.status === 'initializing tesseract') {
+          statusEl.textContent = '初始化引擎...';
+        } else if (m.status === 'loading language traineddata') {
+          statusEl.textContent = '加载中文语言包...';
+        } else if (m.status === 'initializing api') {
+          statusEl.textContent = '初始化API...';
+        }
+      }
+    });
+
+    await worker.setParameters({
+      tessedit_pageseg_mode: '6',
+      tessedit_char_whitelist: '0123456789.km公里KMMm: ',
+    });
+
+    statusEl.textContent = '正在识别...';
+    const ret = await worker.recognize(processed);
+    await worker.terminate();
+
+    const text = ret.data.text;
+    console.log('OCR原始结果:', text);
+
+    ocrDistances = extractDistances(text);
+
+    progressEl.style.display = 'none';
+
+    if (ocrDistances.length > 0) {
+      renderOcrResults();
+    } else {
+      document.getElementById('ocrNoResult').style.display = 'block';
+    }
+  } catch (err) {
+    console.error('OCR失败:', err);
+    progressEl.style.display = 'none';
+    document.getElementById('ocrNoResult').style.display = 'block';
+    showToast('识别失败，请重试');
+  }
+}
+
+function extractDistances(text) {
+  const results = [];
+
+  // 清理文本：统一全角数字和单位
+  const cleaned = text
+    .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[ＫＭｋｍ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[．。]/g, '.');
+
+  // ── 从截图格式分析：每单包含 "HH:MM" 时间 + "X.Xkm" 距离 ──
+  // 提取所有时间（HH:MM格式）
+  const times = [];
+  for (const m of cleaned.matchAll(/\b(\d{1,2}):(\d{2})\b/g)) {
+    const h = parseInt(m[1]), min = parseInt(m[2]);
+    if (h >= 0 && h <= 23 && min >= 0 && min <= 59) {
+      const t = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+      if (!times.includes(t)) times.push(t);
+    }
+  }
+
+  // 提取所有距离（X.Xkm 或 X.X公里 格式）
+  const distances = [];
+  for (const m of cleaned.matchAll(/(\d+\.?\d*)\s*(?:km|公里|KM|Km|kM)/gi)) {
+    const num = parseFloat(m[1]);
+    if (num >= 0 && num < 100) {
+      distances.push(num);
+    }
+  }
+
+  // 如果找到距离和时间的数量相近，尝试配对
+  if (distances.length > 0 && times.length > 0 && Math.abs(distances.length - times.length) <= 3) {
+    const count = Math.min(distances.length, times.length);
+    for (let i = 0; i < count; i++) {
+      results.push({ distance: distances[i], time: times[i] });
+    }
+    // 多余的距离
+    for (let i = count; i < distances.length; i++) {
+      results.push({ distance: distances[i], time: '' });
+    }
+  } else if (distances.length > 0) {
+    // 只有距离，没有时间
+    for (const d of distances) {
+      results.push({ distance: d, time: '' });
+    }
+  }
+
+  // 如果距离为空，兜底：提取所有0-30之间的数字
+  if (results.length === 0) {
+    const allNums = cleaned.match(/\d+\.?\d*/g);
+    if (allNums) {
+      for (const n of allNums) {
+        const num = parseFloat(n);
+        if (num >= 0 && num <= 30) {
+          // 检查是否重复
+          if (!results.some(r => r.distance === num && r.time === '')) {
+            results.push({ distance: num, time: '' });
+          }
+        }
+      }
+    }
+  }
+
+  // 按距离排序
+  results.sort((a, b) => a.distance - b.distance);
+  return results;
+}
+
+function renderOcrResults() {
+  const container = document.getElementById('ocrResultList');
+  const resultsDiv = document.getElementById('ocrResults');
+  const confirmBtn = document.getElementById('ocrConfirmBtn');
+
+  container.innerHTML = ocrDistances.map((item, i) => {
+    const r = calcOrder(item.distance);
+    const timeStr = item.time ? `<span style="font-size:11px;color:var(--text2);">${item.time}</span>` : '';
+    return `
+      <div class="ocr-result-item">
+        <div class="idx">${i + 1}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;min-width:40px;">
+          <span style="font-size:13px;">${item.distance} km</span>
+          ${timeStr}
+        </div>
+        <input type="number" value="${item.distance}" step="0.1" min="0" data-idx="${i}" onchange="updateOcrDistance(${i}, this.value)">
+        <div class="price-preview">¥${r.total.toFixed(1)}</div>
+        <button class="remove-btn" onclick="removeOcrDistance(${i})">✕</button>
+      </div>
+    `;
+  }).join('');
+
+  resultsDiv.style.display = 'block';
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = `确认添加 (${ocrDistances.length}单)`;
+}
+
+function updateOcrDistance(idx, val) {
+  const d = parseFloat(val);
+  if (isNaN(d) || d < 0) return;
+  ocrDistances[idx].distance = d;
+  renderOcrResults();
+}
+
+function removeOcrDistance(idx) {
+  ocrDistances.splice(idx, 1);
+  if (ocrDistances.length === 0) {
+    document.getElementById('ocrResults').style.display = 'none';
+    document.getElementById('ocrNoResult').style.display = 'block';
+    document.getElementById('ocrConfirmBtn').disabled = true;
+  } else {
+    renderOcrResults();
+  }
+}
+
+function confirmOcrAdd() {
+  if (ocrDistances.length === 0) return;
+  let count = 0;
+  ocrDistances.forEach(item => {
+    if (addOrder(item.distance, item.time)) count++;
+  });
+  showToast(`已添加 ${count} 单 ✓`);
+  closeOcrModal();
+}
+
+// ── 键盘支持 ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeOcrModal();
+    closeCalendar();
+  }
+  if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('active')) {
+    confirmAdd();
+  }
+});
+
+// 点击遮罩关闭
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('ocrModalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeOcrModal();
+});
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+// ── 初始化 ──
+(async function() {
+  await initCloudSync();
+  renderAll();
+  updateDataStats();
+})();
+</script>
+</body>
+</html>
